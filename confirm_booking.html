@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد الحجز والبيانات | Masar.com</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { --gold: #c5a059; --primary: #004aad; --bg-app: #f4f6fa; --dark: #0f172a; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-app); color: #334155; }
+
+        @media (max-width: 576px) {
+            .container-fluid-mobile { padding-left: 0 !important; padding-right: 0 !important; }
+            .booking-summary-card, .client-form-card { border-radius: 0 !important; border-left: none !important; border-right: none !important; }
+        }
+
+        /* كارت ملخص الفاتورة */
+        .booking-summary-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff;
+            border-radius: 24px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            position: relative; overflow: hidden;
+        }
+        .booking-summary-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(to right, var(--primary), var(--gold));
+        }
+
+        /* كارت استمارة البيانات */
+        .client-form-card {
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 24px;
+            padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px;
+            font-size: 0.95rem; font-family: 'Cairo', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.1);
+        }
+
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .info-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+    </style>
+</head>
+<body>
+
+<nav class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white sticky-top shadow-sm z-3">
+    <button onclick="history.back()" class="btn btn-light rounded-circle shadow-sm"><i class="fas fa-arrow-right"></i></button>
+    <h5 class="m-0 fw-black text-primary">تأكيد طلب الحجز</h5>
+    <div style="width: 40px;"></div>
+</nav>
+
+<div class="container-fluid container-fluid-mobile px-md-4 mt-3">
+    <div class="row g-3 justify-content-center">
+        
+        <div class="col-lg-5">
+            <div class="booking-summary-card">
+                <h5 class="fw-black text-warning mb-4"><i class="fas fa-file-invoice-dollar me-2"></i> بيان فترة الإقامة المحددة</h5>
+                
+                <div class="info-row">
+                    <span class="text-white-50">القرية / المنتجع:</span>
+                    <span class="fw-bold" id="summaryVillage">---</span>
+                </div>
+                <div class="info-row">
+                    <span class="text-white-50">كود الشاليه الموحد:</span>
+                    <span class="fw-bold text-warning" id="summaryCode">---</span>
+                </div>
+                <div class="info-row">
+                    <span class="text-white-50">تواريخ الإقامة:</span>
+                    <span class="fw-bold text-info" id="summaryDates" dir="ltr">---</span>
+                </div>
+                <div class="info-row">
+                    <span class="text-white-50">عدد ليالي الحجز:</span>
+                    <span class="fw-bold" id="summaryNights">0 ليالي</span>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top border-secondary">
+                    <span class="text-warning fw-bold">إجمالي التكلفة المطلوبة:</span>
+                    <b class="h3 m-0 text-white fw-black" id="summaryTotal">0 ج.م</b>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="client-form-card mb-4">
+                <h5 class="fw-black text-dark mb-4 border-bottom pb-2"><i class="fas fa-user-edit text-primary me-2"></i> بيانات النزيل والتعاقد</h5>
+                
+                <form id="bookingFinalForm" onsubmit="confirmBookingRegistry(event)">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-secondary">اسم العميل الثلاثي:</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-user text-muted"></i></span>
+                            <input type="text" id="clientName" class="form-control" placeholder="اكتب اسم المستأجر بالكامل" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-secondary">رقم تليفون العميل (واتساب):</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fab fa-whatsapp text-success"></i></span>
+                            <input type="tel" id="clientPhone" class="form-control text-start" placeholder="01xxxxxxxxx" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary">مبلغ العربون المالي:</label>
+                            <input type="number" id="depositAmount" class="form-control" placeholder="0" value="0">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary">طريقة الدفع:</label>
+                            <select id="paymentMethod" class="form-select">
+                                <option value="فودافون كاش">فودافون كاش</option>
+                                <option value="حساب بنكي">حساب بنكي</option>
+                                <option value="نقدي في المكتب">نقدي في المكتب</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 rounded-4 fw-bold shadow-sm">
+                        <i class="fas fa-check-circle me-1"></i> ترحيل الحجز وإغلاق الفترة فوراً
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, doc, updateDoc, arrayUnion, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // سحب البيانات المخزنة مؤقتاً من صفحة تفاصيل الشاليه
+    const currentBookingData = JSON.parse(sessionStorage.getItem('currentBooking'));
+
+    function verifyAndRender() {
+        if (!currentBookingData) {
+            alert("جلسة الحجز منتهية، برجاء اختيار الفترة من جديد.");
+            window.location.href = "index.html";
+            return;
+        }
+        document.getElementById('summaryVillage').innerText = currentBookingData.village || 'N/A';
+        document.getElementById('summaryCode').innerText = currentBookingData.rentCode || 'N/A';
+        document.getElementById('summaryDates').innerText = currentBookingData.dates || 'N/A';
+        document.getElementById('summaryNights').innerText = `${currentBookingData.nights} ليالي`;
+        document.getElementById('summaryTotal').innerText = currentBookingData.total || '0 ج.م';
+    }
+
+    window.confirmBookingRegistry = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> جاري ترحيل وحفظ طلب الحجز...`;
+
+        try {
+            const currentUser = auth.currentUser;
+            const marketerName = currentUser ? (currentUser.displayName || currentUser.email) : "مسوق عام";
+
+            // 1. ترحيل البيانات وحفظ تفاصيل الحجز بالكامل في جدول مستقل "bookings"
+            const bookingRef = await addDoc(collection(db, "bookings"), {
+                unitId: currentBookingData.unitId,
+                rentCode: currentBookingData.rentCode,
+                village: currentBookingData.village,
+                dates: currentBookingData.dates,
+                nights: currentBookingData.nights,
+                totalAmount: currentBookingData.total,
+                clientName: document.getElementById('clientName').value.trim(),
+                clientPhone: document.getElementById('clientPhone').value.trim(),
+                deposit: document.getElementById('depositAmount').value || 0,
+                paymentMethod: document.getElementById('paymentMethod').value,
+                marketer: marketerName,
+                createdAt: new Date().toISOString(),
+                status: "مؤكد"
+            });
+
+            // 2. تحديث مصفوفة الأيام المحجوزة (bookedDates) جوه مستند الشاليه في الفايربيز عشان تتقفل فوراً في التقويم الحي
+            const unitDocRef = doc(db, "units", currentBookingData.unitId);
+            
+            // تهيئة الصيغة وحقنها
+            let dateRangeStr = currentBookingData.dates; // الصيغة الجاهزة المرجعة من الفلاتبيكر "YYYY-MM-DD إلى YYYY-MM-DD"
+            await updateDoc(unitDocRef, {
+                bookedDates: arrayUnion(dateRangeStr)
+            });
+
+            alert("🎉 تم تسجيل الحجز بنجاح وإغلاق التواريخ المحددة للشاليه!");
+            sessionStorage.removeItem('currentBooking'); // تنظيف السيشن بعد النجاح
+            window.location.href = "index.html"; // العودة للشاشة الرئيسية للقرية
+
+        } catch (error) {
+            console.error("Error adding booking: ", error);
+            alert("عذراً، حدث خطأ أثناء ترحيل الحجز. حاول مرة أخرى.");
+            btn.disabled = false;
+            btn.innerText = `ترحيل الحجز وإغلاق الفترة فوراً`;
+        }
+    };
+
+    verifyAndRender();
+</script>
+</body>
+</html>

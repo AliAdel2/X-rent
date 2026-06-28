@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العروض الحصرية والتسويقية | Masar PRO</title>
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg-light: #f4f7fc;
+            --card-white: #ffffff;
+            --glass-border: rgba(0, 74, 173, 0.06);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            
+            /* ألوان الهوية الفاتحة والعروض */
+            --primary: #004aad;
+            --primary-light: #edf4fe;
+            --success: #2ecc71;
+            --success-light: #e8fbf0;
+            --danger: #e74c3c;
+            --danger-light: #fdf2f2;
+            --warning: #f39c12;
+            --gold: #c5a059;
+            --purple-offer: #8e44ad;
+            --purple-light: #f5eeec;
+        }
+
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--bg-light);
+            color: var(--text-main); 
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        /* بار العناوين والرجوع */
+        .page-header {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            padding: 14px 18px; 
+            border-radius: 16px;
+            margin-top: 15px; 
+            box-shadow: 0 8px 20px rgba(0, 74, 173, 0.02);
+        }
+
+        .btn-back {
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            background: #ffffff;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+        }
+
+        /* شريط البحث والفلاتر */
+        .filter-section {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 12px;
+            margin-top: 12px;
+            box-shadow: 0 6px 15px rgba(0, 74, 173, 0.01);
+        }
+
+        .search-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn {
+            border: 1px solid transparent;
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.25s;
+        }
+        .filter-btn.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: rgba(0, 74, 173, 0.12);
+        }
+
+        /* كروت العروض الحصرية المضغوطة للموبايل */
+        .unit-card {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 14px; 
+            box-shadow: 0 6px 16px rgba(0, 74, 173, 0.02);
+            transition: all 0.25s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .unit-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 74, 173, 0.06);
+        }
+
+        /* سطر البادجات */
+        .card-top-badges {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .unit-badge {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+        .badge-available { background: var(--success-light); color: var(--success); }
+        .badge-busy { background: var(--danger-light); color: var(--danger); }
+
+        .badge-offer-tag {
+            background: linear-gradient(135deg, #e74c3c, #9b59b6);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 800;
+        }
+
+        .unit-number {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 2px 0;
+        }
+
+        .price-old {
+            font-size: 0.85rem;
+            text-decoration: line-through;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .price-tag {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--danger);
+        }
+
+        .btn-action-booking {
+            background: linear-gradient(135deg, var(--primary), #003685);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 9px;
+            width: 100%;
+            transition: all 0.25s;
+            margin-top: 6px;
+        }
+        .btn-action-booking:disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- رأس الصفحة الخاص بالعروض الحصرية -->
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h6 class="fw-black m-0" style="color: var(--purple-offer); font-size: 1.05rem;"><i class="fas fa-tags me-1"></i> العروض الحصرية والتسويقية</h6>
+            <p class="text-muted small mb-0" style="font-size: 0.75rem;">عروض خاصة بخصومات مستعجلة لزيادة مبيعاتك وتأكيد الحجوزات</p>
+        </div>
+        <a href="marketer_dashboard.html" class="btn btn-back btn-sm px-2 py-1" style="font-size: 0.8rem;">
+            <i class="fas fa-arrow-right me-1"></i> الرئيسية
+        </a>
+    </div>
+
+    <!-- شريط البحث والتصفية السريعة للمسوق -->
+    <div class="filter-section">
+        <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+                <div class="search-box">
+                    <i class="fas fa-search text-muted me-2" style="font-size: 0.85rem;"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث بكود العرض أو القرية..." oninput="filterOffers()">
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="d-flex gap-1 flex-wrap justify-content-md-end">
+                    <button class="filter-btn active" id="btn-all" onclick="setFilter('all')">كل العروض (<span id="count-all">0</span>)</button>
+                    <button class="filter-btn" id="btn-available" onclick="setFilter('available')">متاحة حالياً (<span id="count-available">0</span>)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- شبكة عرض الكروت المضغوطة بعرض الموبايل بالكامل -->
+    <div class="row g-2 mt-1" id="offersGridContainer">
+        <div class="col-12 text-center py-5 text-muted">
+            <i class="fas fa-spinner fa-spin fa-2x mb-2 text-primary"></i>
+            <p class="fw-bold small">جاري تحميل العروض الحصرية المتاحة...</p>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allOffersArray = [];
+    let currentFilterStatus = 'all';
+
+    // حماية الصفحة
+    const localUserData = localStorage.getItem('loggedUser');
+    if (!localUserData) {
+        window.location.href = "login.html";
+    } else {
+        listenToExclusiveOffers();
+    }
+
+    function listenToExclusiveOffers() {
+        // 🛠️ ملحوظة: تم ربطها هنا بكولكشن الـ "units"، لو عندك كولكشن مخصص للعروض غير اسمه هنا إلى "offers" مثلاً
+        onSnapshot(collection(db, "units"), (snapshot) => {
+            allOffersArray = [];
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                // فلترة مبدئية لعرض الوحدات التي تحتوي على خصم أو المصنفة كعرض فقط
+                if(data.isOffer === true || data.oldPrice || data.chaletClass === 'VIP') {
+                    allOffersArray.push({ id: docSnap.id, ...data });
+                }
+            });
+            updateTabsCounters();
+            renderOffersGrid();
+        });
+    }
+
+    function renderOffersGrid() {
+        const container = document.getElementById('offersGridContainer');
+        container.innerHTML = "";
+
+        const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+
+        const filteredOffers = allOffersArray.filter(u => {
+            const uCode = (u.rentCode || '').toLowerCase();
+            const uVillage = (u.village || '').toLowerCase();
+            const matchesSearch = uCode.includes(searchQuery) || uVillage.includes(searchQuery);
+            const isAvailable = u.status === undefined || u.status === "متاح" || u.status === "متاح فوراً";
+
+            if (currentFilterStatus === 'available') return matchesSearch && isAvailable;
+            return matchesSearch;
+        });
+
+        if (filteredOffers.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center py-4 text-muted">
+                    <i class="fas fa-percentage fa-xl mb-2 text-secondary"></i>
+                    <p class="fw-bold small">لا توجد عروض حصرية مطابقة حالياً.</p>
+                </div>`;
+            return;
+        }
+
+        filteredOffers.forEach(u => {
+            const isAvailable = u.status === undefined || u.status === "متاح" || u.status === "متاح فوراً";
+            const currentPrice = parseFloat(u.price || 0);
+            // افترضنا وجود سعر قديم لعمل الخصم، أو حساب قيمة افتراضية للتسويق
+            const oldPrice = parseFloat(u.oldPrice || currentPrice * 1.2); 
+            const chaletName = u.chaletName || `شاليه كود (${u.rentCode || 'N/A'})`;
+
+            const div = document.createElement('div');
+            // كرت مفرود بكامل العرض على الموبايل
+            div.className = "col-12 col-md-6 col-lg-4";
+            div.innerHTML = `
+                <div class="unit-card">
+                    <div class="card-top-badges">
+                        <span class="unit-badge ${isAvailable ? 'badge-available' : 'badge-busy'}">
+                            ${isAvailable ? 'العرض متاح' : 'انتهى العرض'}
+                        </span>
+                        <span class="badge-offer-tag"><i class="fas fa-fire"></i> عرض حصري</span>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-muted fw-bold mb-0" style="color: var(--gold) !important; font-size: 0.75rem;"><i class="fas fa-campground"></i> ${u.village || 'قرية ريزورت'}</p>
+                        <h3 class="unit-number">${chaletName}</h3>
+                    </div>
+
+                    <!-- سطر السعر الملموم قبل وبعد الخصم -->
+                    <div class="my-2 border-top border-bottom py-1 d-flex justify-content-between align-items-center">
+                        <span class="text-muted fw-bold" style="font-size: 0.75rem;">السعر الليلة في العرض:</span>
+                        <div>
+                            <span class="price-old">${oldPrice.toLocaleString()} ج.م</span>
+                            <span class="price-tag">${currentPrice.toLocaleString()} <span style="font-size: 0.75rem; font-weight: normal;">ج.م</span></span>
+                        </div>
+                    </div>
+
+                    <p class="text-muted text-center mb-2" style="font-size: 0.75rem; font-weight: 600;">
+                        <i class="fas fa-bed text-secondary"></i> ${u.rooms || 0} غرف | 
+                        <i class="fas fa-snowflake text-secondary"></i> ${u.acCount || 0} تكييف
+                    </p>
+
+                    <button class="btn-action-booking" ${!isAvailable ? 'disabled' : ''} onclick="goToBookingPage('${u.rentCode || ''}', '${u.village || ''}', '${u.price || 0}')">
+                        ${isAvailable ? '<i class="fas fa-bolt me-1"></i> اقتنص العرض الحصري' : 'غير متاح حالياً'}
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function updateTabsCounters() {
+        const allCount = allOffersArray.length;
+        const availCount = allOffersArray.filter(u => u.status === undefined || u.status === "متاح" || u.status === "متاح فوراً").length;
+        document.getElementById('count-all').innerText = allCount;
+        document.getElementById('count-available').innerText = availCount;
+    }
+
+    window.setFilter = (status) => {
+        currentFilterStatus = status;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`btn-${status}`).classList.add('active');
+        renderOffersGrid();
+    };
+
+    window.filterOffers = () => { renderOffersGrid(); };
+    window.goToBookingPage = (code, village, price) => {
+        window.location.href = `make_booking.html?code=${encodeURIComponent(code)}&village=${encodeURIComponent(village)}&price=${encodeURIComponent(price)}&isOffer=true`;
+    };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

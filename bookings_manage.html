@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة وتعديل الحجوزات | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --gold: #c5a059; 
+            --dark: #f8f9fa; 
+            --surface: #ffffff; 
+            --primary-blue: #004aad; 
+            --text-main: #2d3436;
+        }
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--dark); 
+            color: var(--text-main); 
+            padding-top: 80px; 
+            padding-bottom: 50px;
+        }
+
+        /* الهيدر العلوي المطور المتناسق */
+        .main-header {
+            background: var(--surface); position: fixed; top: 0; width: 100%; z-index: 2000;
+            padding: 15px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand-logo { font-size: 1.5rem; font-weight: 900; color: var(--primary-blue); text-decoration: none; }
+        .brand-logo span { color: var(--gold); }
+
+        /* كارت الحجز الدائري المطور */
+        .booking-card { 
+            background: var(--surface); 
+            border: none;
+            border-radius: 30px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: 0.3s; 
+            height: 100%;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .booking-card::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 6px; height: 100%; background: var(--primary-blue);
+        }
+        
+        .card-body-custom { padding: 25px; }
+        
+        /* الشارات الملونة المتناسقة */
+        .lux-badge { background: rgba(0, 74, 173, 0.1); color: var(--primary-blue); font-weight: 800; padding: 6px 14px; border-radius: 12px; font-size: 0.8rem; }
+        .marketer-badge { background: rgba(197, 160, 89, 0.15); color: var(--gold); font-weight: 700; padding: 4px 10px; border-radius: 10px; font-size: 0.75rem; }
+        
+        /* حقل البحث الدائري */
+        .search-bar-container { padding: 15px 0; background: transparent; }
+        .search-input-group {
+            background: var(--surface); border-radius: 15px; display: flex; align-items: center; padding: 5px 15px; border: 1px solid #eee;
+        }
+        .search-input-group input {
+            border: none; background: transparent; padding: 10px; width: 100%; outline: none; font-size: 0.9rem; color: var(--text-main);
+        }
+
+        /* العناصر المالية داخل الكارت */
+        .finance-box {
+            background: #f1f2f6;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .finance-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid #e1e2e6; }
+        .finance-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+
+        /* الأزرار الدائرية المتناسقة */
+        .btn-action-edit {
+            background: var(--primary-blue); color: #fff; width: 100%; padding: 12px;
+            border-radius: 15px; border: none; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-action-edit:hover { background: #003680; color: #fff; }
+        .btn-action-delete {
+            background: #fff; color: #e74c3c; width: 100%; padding: 12px;
+            border-radius: 15px; border: 1px solid #f8d7da; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-action-delete:hover { background: #fce8e6; }
+
+        /* تخصيص موديول التعديل الفاتح */
+        .modal-content { background-color: var(--surface); color: var(--text-main); border: none; border-radius: 30px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); }
+        .form-control, .form-select {
+            background-color: #f1f2f6 !important; border: 1px solid #e1e2e6 !important; color: var(--text-main) !important; border-radius: 12px; padding: 10px 12px;
+        }
+        .form-control:focus, .form-select:focus { border-color: var(--primary-blue) !important; box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.1); }
+        .finance-summary-alert { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 15px; }
+    </style>
+</head>
+<body>
+
+<!-- الهيدر العلوي المتناسق تماماً مع بوابة المسوقين -->
+<header class="main-header shadow-sm">
+    <a href="#" class="brand-logo">X-rent<span>.PRO</span></a>
+    <div class="d-flex gap-2">
+        <a href="master_plan.html" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3"><i class="fas fa-th me-1"></i> المخطط الشهري</a>
+    </div>
+</header>
+
+<div class="container mt-3">
+    <div class="row align-items-center mb-2">
+        <div class="col-md-7">
+            <h4 class="fw-black text-dark m-0"><i class="fas fa-receipt text-gold me-1"></i> الحجوزات النشطة على السيستم</h4>
+            <p class="text-muted small m-0">تحديث فترات الإقامة والمدفوعات والرسوم الإضافية لخدمة مشرف التسكين</p>
+        </div>
+        <div class="col-md-5">
+            <div class="search-bar-container">
+                <div class="search-input-group shadow-sm">
+                    <i class="fas fa-search text-muted"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث باسم العميل أو كود الشاليه..." onkeyup="filterBookings()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- قائمة الحجوزات المحدثة بالكامل -->
+    <div class="row g-4" id="bookingsListContainer">
+        <div class="text-center py-5 text-muted">جاري جلب قائمة وتفاصيل الحجوزات الحالية...</div>
+    </div>
+</div>
+
+<!-- ================= 🛠️ موديول التعديل المتقدم (Light Mode) ================= -->
+<div class="modal fade" id="editBookingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content p-2">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-black text-primary-blue"><i class="fas fa-edit me-1 text-gold"></i> تعديل بيانات وتفاصيل التعاقد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editBookingForm">
+                    <input type="hidden" id="editBookingId">
+                    <input type="hidden" id="editUnitId">
+                    <input type="hidden" id="editOldDates">
+
+                    <div class="row g-3">
+                        <!-- العميل والمسوق -->
+                        <div class="col-md-6">
+                            <label class="small fw-bold text-muted mb-1">اسم المستأجر بالكامل:</label>
+                            <input type="text" id="editClientName" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small fw-bold text-muted mb-1">اسم المسوق المسؤول:</label>
+                            <input type="text" id="editMarketer" class="form-control">
+                        </div>
+
+                        <!-- التواريخ -->
+                        <div class="col-md-6">
+                            <label class="small fw-bold text-muted mb-1">تاريخ الدخول:</label>
+                            <input type="date" id="editStartDate" class="form-control" onchange="calculateBookingFinance()">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small fw-bold text-muted mb-1">تاريخ الخروج:</label>
+                            <input type="date" id="editEndDate" class="form-control" onchange="calculateBookingFinance()">
+                        </div>
+
+                        <!-- الحسبة المادية واليومية -->
+                        <div class="col-md-4">
+                            <label class="small fw-bold text-muted mb-1">عدد الليالي:</label>
+                            <input type="number" id="editNights" class="form-control fw-bold text-primary-blue" style="background:#eef2ff !important" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small fw-bold text-muted mb-1">سعر الليلة الواحدة:</label>
+                            <input type="number" id="editPricePerNight" class="form-control" value="0" oninput="calculateBookingFinance()">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small fw-bold text-muted mb-1">إجمالي تكلفة الإيجار:</label>
+                            <input type="number" id="editTotalAmount" class="form-control fw-bold text-success" style="background:#f0fdf4 !important" readonly>
+                        </div>
+
+                        <!-- العربون والمدفوعات الإضافية لمشرف التسكين -->
+                        <div class="col-md-4">
+                            <label class="small fw-bold text-muted mb-1">العربون المدفوع مسبقاً:</label>
+                            <input type="number" id="editDeposit" class="form-control" value="0" oninput="calculateBookingFinance()">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small fw-bold text-muted mb-1">بند رسوم أخرى (سيارة/تصريح):</label>
+                            <input type="text" id="editExtraTitle" class="form-control" placeholder="مثال: تصريح دخول سيارة">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small fw-bold text-muted mb-1">تكلفة الرسوم:</label>
+                            <input type="number" id="editExtraAmount" class="form-control" value="0" oninput="calculateBookingFinance()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small fw-bold text-muted mb-1">هل اندفعت؟</label>
+                            <select id="editExtraPaidStatus" class="form-select" onchange="calculateBookingFinance()">
+                                <option value="نعم">نعم (اندفعت)</option>
+                                <option value="لا">لا (تجمع للمتبقي)</option>
+                            </select>
+                        </div>
+
+                        <!-- الحسبة النهائية الكلية للمتبقي -->
+                        <div class="col-12 mt-4 p-3 finance-summary-alert d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-dark"><i class="fas fa-calculator text-danger me-1"></i> صافي المبلغ المتبقي للتحصيل عند التسكين:</span>
+                            <h3 class="m-0 text-danger fw-black" id="editFinalRemainingDisplay">0 ج.م</h3>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">اغلاق</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" style="background:var(--primary-blue)" onclick="saveBookingEdits()">حفظ وتحديث التغييرات</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc, getDoc, arrayRemove, arrayUnion } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allBookings = [];
+    const editModal = new bootstrap.Modal(document.getElementById('editBookingModal'));
+
+    async function loadBookings() {
+        const container = document.getElementById('bookingsListContainer');
+        try {
+            const querySnapshot = await getDocs(collection(db, "bookings"));
+            allBookings = [];
+            querySnapshot.forEach((doc) => { allBookings.push({ id: doc.id, ...doc.data() }); });
+
+            if(allBookings.length === 0) {
+                container.innerHTML = `<div class="text-center py-5 text-muted">لا توجد حجوزات نشطة حالياً بالسيستم.</div>`;
+                return;
+            }
+            renderBookings(allBookings);
+        } catch (error) {
+            container.innerHTML = `<div class="alert alert-danger">حدث خطأ: ${error.message}</div>`;
+        }
+    }
+
+    function renderBookings(list) {
+        const container = document.getElementById('bookingsListContainer');
+        container.innerHTML = "";
+
+        list.forEach(booking => {
+            const dateRangeStr = booking.dates || "غير محدد";
+            
+            let nightsCount = booking.nights || 0;
+            if (nightsCount === 0 && dateRangeStr.includes("إلى")) {
+                const parts = dateRangeStr.split("إلى");
+                nightsCount = Math.round((new Date(parts[1].trim()) - new Date(parts[0].trim())) / (1000*60*60*24)) || 0;
+            }
+
+            const totalRent = parseFloat(booking.totalAmount) || 0;
+            const deposit = parseFloat(booking.deposit) || 0;
+            const extraAmount = parseFloat(booking.extraAmount) || 0;
+            const extraPaid = booking.extraPaidStatus || "لا";
+            
+            let remaining = totalRent - deposit;
+            if (extraPaid === "لا") { remaining += extraAmount; }
+
+            container.innerHTML += `
+                <div class="col-lg-4 col-md-6 booking-item" data-search="${booking.clientName} ${booking.rentCode || ''}">
+                    <div class="booking-card shadow-sm">
+                        <div class="card-body-custom">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="fw-bold text-dark m-0" style="font-size:1.15rem">${booking.clientName}</h5>
+                                <span class="lux-badge">كود: ${booking.rentCode || 'N/A'}</span>
+                            </div>
+                            
+                            <div class="mb-3 d-flex gap-2 align-items-center">
+                                <span class="marketer-badge"><i class="fas fa-user-tie me-1"></i> المسوق: ${booking.marketer || "عام"}</span>
+                                <span class="badge bg-light text-dark border small fw-bold" style="border-radius:10px">${booking.village || 'شاليه'}</span>
+                            </div>
+                            
+                            <div class="text-muted small mb-1"><i class="fas fa-phone-alt text-primary-blue ms-1"></i> تليفون: <span class="fw-bold text-dark">${booking.clientPhone || 'غير مسجل'}</span></div>
+                            <div class="text-muted small mb-1"><i class="far fa-calendar-alt text-gold ms-1"></i> الفترة: <b class="text-primary-blue" dir="ltr">${dateRangeStr}</b></div>
+                            <div class="text-muted small mb-0"><i class="fas fa-moon text-muted ms-1"></i> المدة اليومية: <span class="fw-bold text-dark">${nightsCount} ليالي</span></div>
+                            
+                            <div class="finance-box shadow-sm">
+                                <div class="finance-row text-muted"><span>إجمالي الإيجار الكلي:</span><b class="text-dark">${totalRent} ج.م</b></div>
+                                <div class="finance-row text-muted"><span>العربون المدفوع:</span><b class="text-primary-blue">${deposit} ج.م</b></div>
+                                ${extraAmount > 0 ? `<div class="finance-row text-muted"><span>رسوم (${booking.extraTitle || 'أخرى'}):</span><b class="text-secondary">${extraAmount} ج.م (${extraPaid === 'نعم' ? 'مدفوعة' : 'متبقية'})</b></div>` : ''}
+                                <div class="d-flex justify-content-between pt-2 mt-1">
+                                    <span class="text-danger fw-bold fs-6">المتبقي للتسليم:</span><b class="text-danger fw-black fs-5">${remaining} ج.م</b>
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mt-3">
+                                <div class="col-6">
+                                    <button class="btn-action-delete" onclick="deleteBooking('${booking.id}', '${booking.unitId}', '${dateRangeStr}')">
+                                        <i class="fas fa-trash-alt"></i> حذف وإلغاء
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn-action-edit" onclick="openEditModal('${booking.id}')">
+                                        <i class="fas fa-edit"></i> التعديل المالي
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // ================= 🧮 العمليات الرياضية التلقائية لحساب الأرقام موديول =================
+    window.calculateBookingFinance = () => {
+        const startInput = document.getElementById('editStartDate').value;
+        const endInput = document.getElementById('editEndDate').value;
+        const pricePerNight = parseFloat(document.getElementById('editPricePerNight').value) || 0;
+        const deposit = parseFloat(document.getElementById('editDeposit').value) || 0;
+        const extraAmount = parseFloat(document.getElementById('editExtraAmount').value) || 0;
+        const extraPaidStatus = document.getElementById('editExtraPaidStatus').value;
+
+        let nights = 0;
+        if (startInput && endInput) {
+            const diffTime = new Date(endInput) - new Date(startInput);
+            nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 0;
+        }
+        if (nights < 0) nights = 0;
+
+        document.getElementById('editNights').value = nights;
+        
+        const totalRent = nights * pricePerNight;
+        document.getElementById('editTotalAmount').value = totalRent;
+
+        let finalRemaining = totalRent - deposit;
+        if (extraPaidStatus === "لا") { finalRemaining += extraAmount; }
+
+        document.getElementById('editFinalRemainingDisplay').innerText = `${finalRemaining} ج.م`;
+    };
+
+    window.openEditModal = (id) => {
+        const booking = allBookings.find(b => b.id === id);
+        if(!booking) return;
+
+        document.getElementById('editBookingId').value = booking.id;
+        document.getElementById('editUnitId').value = booking.unitId || "";
+        document.getElementById('editOldDates').value = booking.dates || "";
+        document.getElementById('editClientName').value = booking.clientName || "";
+        document.getElementById('editMarketer').value = booking.marketer || "عام";
+        
+        if (booking.dates && booking.dates.includes("إلى")) {
+            const parts = booking.dates.split("إلى");
+            document.getElementById('editStartDate').value = parts[0].trim();
+            document.getElementById('editEndDate').value = parts[1].trim();
+        } else {
+            document.getElementById('editStartDate').value = "";
+            document.getElementById('editEndDate').value = "";
+        }
+
+        const totalRent = parseFloat(booking.totalAmount) || 0;
+        const totalNights = parseInt(booking.nights) || 1;
+        
+        document.getElementById('editNights').value = totalNights;
+        document.getElementById('editPricePerNight').value = Math.round(totalRent / (totalNights || 1)) || 0;
+        document.getElementById('editTotalAmount').value = totalRent;
+        document.getElementById('editDeposit').value = parseFloat(booking.deposit) || 0;
+        
+        document.getElementById('editExtraTitle').value = booking.extraTitle || "";
+        document.getElementById('editExtraAmount').value = parseFloat(booking.extraAmount) || 0;
+        document.getElementById('editExtraPaidStatus').value = booking.extraPaidStatus || "لا";
+
+        calculateBookingFinance();
+        editModal.show();
+    };
+
+    window.saveBookingEdits = async () => {
+        const bId = document.getElementById('editBookingId').value;
+        const uId = document.getElementById('editUnitId').value;
+        const oldDatesStr = document.getElementById('editOldDates').value;
+        const start = document.getElementById('editStartDate').value;
+        const end = document.getElementById('editEndDate').value;
+        
+        if(!start || !end) { alert("برجاء تحديد تواريخ الدخول والخروج الصحيحة."); return; }
+        
+        const newDatesStr = `${start} إلى ${end}`;
+        const nights = parseInt(document.getElementById('editNights').value) || 0;
+        const totalAmount = parseFloat(document.getElementById('editTotalAmount').value) || 0;
+        const deposit = parseFloat(document.getElementById('editDeposit').value) || 0;
+        const extraTitle = document.getElementById('editExtraTitle').value;
+        const extraAmount = parseFloat(document.getElementById('editExtraAmount').value) || 0;
+        const extraPaidStatus = document.getElementById('editExtraPaidStatus').value;
+
+        try {
+            const bookingRef = doc(db, "bookings", bId);
+            await updateDoc(bookingRef, {
+                clientName: document.getElementById('editClientName').value.trim(),
+                marketer: document.getElementById('editMarketer').value.trim(),
+                dates: newDatesStr,
+                nights: nights,
+                totalAmount: totalAmount,
+                deposit: deposit,
+                extraTitle: extraTitle,
+                extraAmount: extraAmount,
+                extraPaidStatus: extraPaidStatus
+            });
+
+            if (uId) {
+                const unitRef = doc(db, "units", uId);
+                await updateDoc(unitRef, { bookedDates: arrayRemove(oldDatesStr) });
+                await updateDoc(unitRef, { bookedDates: arrayUnion(newDatesStr) });
+            }
+
+            alert("🎉 تم حفظ وتحديث البيانات بنجاح ومزامنة الحسابات المفتوحة!");
+            editModal.hide();
+            loadBookings();
+        } catch (error) {
+            alert("حدث خطأ أثناء الحفظ: " + error.message);
+        }
+    };
+
+    async function deleteBooking(bookingId, unitId, dateRangeStr) {
+        if (!confirm("هل أنت متأكد من حذف وإلغاء هذا الحجز نهائياً؟")) return;
+        try {
+            await deleteDoc(doc(db, "bookings", bookingId));
+            if (unitId) {
+                await updateDoc(doc(db, "units", unitId), { bookedDates: arrayRemove(dateRangeStr) });
+            }
+            alert("تم حذف الحجز بنجاح وإعادة فتح الأيام على الجدول الماستر 🟢");
+            loadBookings();
+        } catch (error) {
+            alert("خطأ أثناء الحذف: " + error.message);
+        }
+    }
+
+    window.filterBookings = () => {
+        const val = document.getElementById('searchInput').value.toLowerCase();
+        const items = document.querySelectorAll('.booking-item');
+        items.forEach(item => {
+            const text = item.getAttribute('data-search').toLowerCase();
+            item.style.display = text.includes(val) ? 'block' : 'none';
+        });
+    };
+
+    window.deleteBooking = deleteBooking;
+    window.onload = loadBookings;
+</script>
+</body>
+</html>

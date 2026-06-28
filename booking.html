@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masar.com | بوابة المسوقين والدليل الذكي</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --gold: #c5a059; --dark: #f8f9fa; --surface: #ffffff; --primary-blue: #004aad; }
+        body { font-family: 'Cairo', sans-serif; background: var(--dark); color: #2d3436; padding-top: 80px; }
+
+        /* الهيدر العلوي المطور */
+        .main-header {
+            background: var(--surface); position: fixed; top: 0; width: 100%; z-index: 2000;
+            padding: 10px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand-logo { font-size: 1.5rem; font-weight: 900; color: var(--primary-blue); text-decoration: none; }
+        .brand-logo span { color: var(--gold); }
+        
+        .nav-links { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; }
+        .nav-links a { text-decoration: none; color: #2d3436; font-weight: 700; font-size: 0.9rem; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary-blue); }
+
+        /* الفلاتر المرنة (Horizontal Chips) */
+        .chips-wrapper {
+            background: var(--surface); padding: 10px 0;
+            position: sticky; top: 68px; z-index: 1000; border-bottom: 1px solid #eee;
+        }
+        .chips-container {
+            display: flex; gap: 10px; overflow-x: auto; white-space: nowrap;
+            padding: 5px 15px; scrollbar-width: none;
+        }
+        .chips-container::-webkit-scrollbar { display: none; }
+        
+        .chip {
+            background: #f1f2f6; border: 1px solid #e1e2e6; border-radius: 25px;
+            padding: 8px 20px; font-size: 0.85rem; font-weight: 700; color: #636e72;
+            cursor: pointer; transition: 0.3s;
+        }
+        .chip.active { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+
+        /* سطر فلاتر الغرف الجديد */
+        .rooms-filter-wrapper {
+            background: #fff; padding: 10px 15px; border-bottom: 1px solid #eee;
+        }
+
+        .search-bar-container { padding: 15px; background: var(--surface); }
+        .search-input-group {
+            background: #f1f2f6; border-radius: 15px; display: flex; align-items: center; padding: 5px 15px;
+        }
+        .search-input-group input {
+            border: none; background: transparent; padding: 10px; width: 100%; outline: none; font-size: 0.9rem;
+        }
+
+        /* كارت الوحدة */
+        .unit-card {
+            background: var(--surface); border-radius: 30px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.3s; height: 100%;
+        }
+        .img-wrapper { position: relative; height: 260px; }
+        .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* شارات الحالة والفئة المضافة حديثاً فوق الصورة */
+        .badge-status {
+            position: absolute; top: 15px; left: 15px;
+            background: rgba(46, 204, 113, 0.95); color: #fff;
+            padding: 5px 15px; border-radius: 12px; font-weight: 800; font-size: 0.75rem;
+            backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* شارة تصنيف الشاليه الجديد (ملكي - وسط - اقتصادي) */
+        .badge-class {
+            position: absolute; top: 50px; left: 15px;
+            padding: 4px 12px; border-radius: 10px; font-weight: 800; font-size: 0.7rem; color: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .class-vip { background: linear-gradient(135deg, #f1c40f, #d35400); color: #000 !important; }
+        .class-medium { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .class-standard { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+
+        .rating-badge {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0,0,0,0.6); color: #fff;
+            padding: 5px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700;
+        }
+
+        .price-float {
+            position: absolute; bottom: 0; right: 0; background: var(--primary-blue);
+            color: #fff; padding: 12px 25px; border-radius: 25px 0 0 0; font-weight: 700;
+        }
+        .card-body-custom { padding: 25px; text-align: center; }
+        .unit-title { font-size: 1.2rem; font-weight: 800; color: #1e272e; margin-bottom: 2px; line-height: 1.5; }
+        .chalet-name-tag { font-size: 0.95rem; font-weight: 700; color: var(--gold); display: block; margin-bottom: 10px; }
+        .specs-line { display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; margin-top: 15px; }
+        .btn-book {
+            background: var(--primary-blue); color: #fff; width: 100%; padding: 15px;
+            border-radius: 15px; border: none; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <a href="#" class="brand-logo">X-rent<span>.com</span></a>
+    <ul class="nav-links d-none d-md-flex">
+        <li><a href="index.html">الرئيسية</a></li>
+        <li><a href="#">حجوزاتي</a></li>
+        <li><a href="login.html">تسجيل الدخول</a></li>
+    </ul>
+    <i class="fas fa-bars d-md-none text-dark" style="font-size: 1.2rem;"></i>
+</header>
+
+<!-- فلاتر القرى -->
+<section class="chips-wrapper">
+    <div class="chips-container" id="villageChips">
+        <div class="chip active" onclick="filterByVillage('all', this)">كل القرى</div>
+        <div class="chip" onclick="filterByVillage('فارما بيتش ريزورت', this)">فارما بيتش</div>
+        <div class="chip" onclick="filterByVillage('مارينا دلتا', this)">مارينا دلتا</div>
+        <div class="chip" onclick="filterByVillage('بلوبيتش', this)">بلوبيتش</div>
+        <div class="chip" onclick="filterByVillage('مارينا دلتا لاجونز', this)">لاجونز</div>
+    </div>
+</section>
+
+<!-- فلاتر عدد الغرف الذكية -->
+<section class="rooms-filter-wrapper">
+    <div class="container d-flex align-items-center gap-2">
+        <span class="small fw-bold text-muted min-w-fit ms-2"><i class="fas fa-filter text-primary"></i> عدد الغرف:</span>
+        <div class="chips-container p-0 m-0" id="roomsChips">
+            <div class="chip active" onclick="filterByRooms('all', this)">الكل</div>
+            <div class="chip" onclick="filterByRooms(1, this)">غرفة واحدة</div>
+            <div class="chip" onclick="filterByRooms(2, this)">غرفتين (2)</div>
+            <div class="chip" onclick="filterByRooms(3, this)">3 غرف فأكثر</div>
+        </div>
+    </div>
+</section>
+
+<div class="search-bar-container">
+    <div class="container">
+        <div class="search-input-group shadow-sm">
+            <i class="fas fa-search text-muted"></i>
+            <input type="text" id="searchCode" placeholder="ابحث بكود الحجز، اسم الشاليه، أو القرية...">
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row g-4" id="unitsGrid"></div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allUnits = [];
+    let currentVillage = 'all';
+    let currentRooms = 'all';
+
+    onSnapshot(collection(db, "units"), (snapshot) => {
+        allUnits = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderUnits(allUnits);
+    });
+
+    function renderUnits(data) {
+        const grid = document.getElementById('unitsGrid');
+        grid.innerHTML = '';
+        data.forEach(unit => {
+            
+            // التعديل الجوهري الأول: معالجة الإطلالات المتعددة (سواء كانت مصفوفة أو نص قديم) لضمان عدم حدوث خطأ
+            let viewsText = 'إطلالة رائعة';
+            if (unit.view) {
+                if (Array.isArray(unit.view)) {
+                    viewsText = unit.view.join(' و ');
+                } else {
+                    viewsText = unit.view;
+                }
+            }
+            const viewTitle = `شاليه على ${viewsText}`;
+            
+            const chaletName = unit.chaletName || `شاليه كود (${unit.rentCode || 'N/A'})`;
+            
+            // التعديل الجوهري الثاني: تحديد ستايل شارة فئة وتصنيف السعر بناءً على فئة الشاليه
+            let classBadgeHTML = '';
+            if (unit.chaletClass === 'VIP') {
+                classBadgeHTML = `<span class="badge-class class-vip"><i class="fas fa-crown"></i> ملكي VIP</span>`;
+            } else if (unit.chaletClass === 'Medium') {
+                classBadgeHTML = `<span class="badge-class class-medium"><i class="fas fa-star-half-alt"></i> وسط Medium</span>`;
+            } else if (unit.chaletClass === 'Standard') {
+                classBadgeHTML = `<span class="badge-class class-standard"><i class="fas fa-percentage"></i> اقتصادي</span>`;
+            } else {
+                classBadgeHTML = `<span class="badge-class class-standard">عام</span>`;
+            }
+            
+            grid.innerHTML += `
+                <div class="col-lg-4 col-md-6">
+                    <div class="unit-card">
+                        <div class="img-wrapper">
+                            <img src="${unit.mainImage || 'https://via.placeholder.com/600x400'}" alt="Unit">
+                            <span class="badge-status">متاح حالياً</span>
+                            ${classBadgeHTML} <!-- حقن شارة التصنيف المالي هنا -->
+                            <div class="rating-badge">4.9 <i class="fas fa-star text-warning"></i></div>
+                            <div class="price-float">${unit.price} <small>ج.م / ليلة</small></div>
+                        </div>
+                        <div class="card-body-custom">
+                            <h3 class="unit-title">${viewTitle}</h3>
+                            <span class="chalet-name-tag"><i class="fas fa-home ms-1"></i> ${chaletName}</span>
+                            <span class="text-muted small"><i class="fas fa-map-marker-alt ms-1"></i> ${unit.village}</span>
+                            
+                            <div class="specs-line">
+                                <div class="spec-item"><i class="fas fa-bed"></i><span>${unit.rooms} غرف</span></div>
+                                <div class="spec-item"><i class="fas fa-bath"></i><span>${unit.bathrooms} حمام</span></div>
+                                <div class="spec-item"><i class="fas fa-snowflake"></i><span>${unit.acCount} تكييف</span></div>
+                            </div>
+
+                            <button class="btn-book" onclick="goToDetails('${unit.id}')">
+                                المعاينة والحجز <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    window.filterByVillage = (village, el) => {
+        currentVillage = village;
+        document.querySelectorAll('#villageChips .chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        applyFilters();
+    };
+
+    window.filterByRooms = (rooms, el) => {
+        currentRooms = rooms;
+        document.querySelectorAll('#roomsChips .chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        applyFilters();
+    };
+
+    document.getElementById('searchCode').addEventListener('input', applyFilters);
+
+    function applyFilters() {
+        const search = document.getElementById('searchCode').value.toLowerCase();
+        
+        const filtered = allUnits.filter(u => {
+            const matchVillage = (currentVillage === 'all' || u.village === currentVillage);
+            
+            // التعديل الجوهري الثالث: تحسين فلترة الغرف بشكل دقيق رقمياً
+            let matchRooms = true;
+            const uRooms = parseInt(u.rooms) || 0;
+            if (currentRooms !== 'all') {
+                const targetRooms = parseInt(currentRooms);
+                if (targetRooms === 3) {
+                    matchRooms = (uRooms >= 3);
+                } else {
+                    matchRooms = (uRooms === targetRooms);
+                }
+            }
+
+            const uName = u.chaletName ? u.chaletName.toLowerCase() : '';
+            const uCode = u.rentCode ? u.rentCode.toLowerCase() : '';
+            const uVillage = u.village ? u.village.toLowerCase() : '';
+            
+            const matchSearch = (uCode.includes(search) || uVillage.includes(search) || uName.includes(search));
+            
+            return matchVillage && matchRooms && matchSearch;
+        });
+        
+        renderUnits(filtered);
+    }
+
+    window.goToDetails = (id) => { window.location.href = `details.html?id=${id}`; };
+</script>
+</body>
+</html>

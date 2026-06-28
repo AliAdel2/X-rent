@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الإدارية | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { 
+            --bg-dark: #0f172a;
+            --primary: #38bdf8;
+            --secondary: #818cf8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+        
+        body { font-family: 'Cairo', sans-serif; background: #020617; color: #f8fafc; min-height: 100vh; padding-bottom: 60px; }
+
+        /* التصميم العام للكروت */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        /* كروت الإحصائيات الفخمة */
+        .stat-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .stat-icon { font-size: 1.8rem; opacity: 0.8; }
+
+        /* كروت المهام التفاعلية */
+        .action-tile {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .action-tile:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .custom-table { color: #fff; width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        .custom-table thead th { color: var(--primary); border: none; padding-bottom: 15px; }
+        .custom-table tbody tr { background: rgba(255,255,255,0.02); border-radius: 12px; }
+        .custom-table td { padding: 18px; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        .btn-logout { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid #f87171; }
+        .btn-logout:hover { background: #ef4444; color: #fff; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar p-3 mb-4 sticky-top" style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px);">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <h5 class="m-0 fw-black"><i class="fas fa-shield-halved text-primary me-2"></i>لوحة التحكم الرئيسية</h5>
+        <div class="d-flex gap-2">
+            <a href="index.html" class="btn btn-sm btn-outline-light rounded-pill px-3"><i class="fas fa-home me-1"></i> الواجهة</a>
+            <button id="logoutBtn" class="btn btn-sm btn-logout rounded-pill px-3"><i class="fas fa-sign-out-alt me-1"></i> خروج</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container px-3">
+    <!-- إحصائيات -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card border-start border-4 border-primary">
+                <div>
+                    <span class="text-muted small">الوحدات النشطة</span>
+                    <h3 class="fw-bold mt-1" id="totalUnitsCount">0</h3>
+                </div>
+                <div class="stat-icon text-primary"><i class="fas fa-bed"></i></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card border-start border-4 border-warning">
+                <div>
+                    <span class="text-muted small">حجوزات مؤكدة</span>
+                    <h3 class="fw-bold mt-1" id="totalBookingsCount">0</h3>
+                </div>
+                <div class="stat-icon text-warning"><i class="fas fa-calendar-check"></i></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card border-start border-4 border-success">
+                <div>
+                    <span class="text-muted small">حالة النظام</span>
+                    <h3 class="fw-bold mt-1 fs-5 mt-2"><i class="fas fa-circle-check text-success me-1"></i> يعمل بكفاءة</h3>
+                </div>
+                <div class="stat-icon text-success"><i class="fas fa-server"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- المهام -->
+    <div class="glass-card mb-4">
+        <h6 class="fw-bold mb-4 text-primary"><i class="fas fa-compass me-2"></i> لوحة الإجراءات السريعة</h6>
+        <div class="row g-3">
+            <div class="col-6 col-md-3" id="actionAdd">
+                <div class="action-tile text-center">
+                    <i class="fas fa-plus-circle text-primary fs-3 mb-2"></i>
+                    <p class="m-0 fw-bold">إضافة وحدة</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3" id="actionReports">
+                <div class="action-tile text-center">
+                    <i class="fas fa-chart-line text-warning fs-3 mb-2"></i>
+                    <p class="m-0 fw-bold">التقارير</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3" id="actionUsers">
+                <div class="action-tile text-center">
+                    <i class="fas fa-users text-success fs-3 mb-2"></i>
+                    <p class="m-0 fw-bold">المسوقين</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3" id="actionSupport">
+                <div class="action-tile text-center">
+                    <i class="fas fa-tools text-danger fs-3 mb-2"></i>
+                    <p class="m-0 fw-bold">الدعم الفني</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الجدول -->
+    <div class="glass-card">
+        <h5 class="fw-bold mb-3"><i class="fas fa-list-ul text-primary me-2"></i> جرد الشاليهات</h5>
+        <div class="table-responsive">
+            <table class="table custom-table align-middle">
+                <thead>
+                    <tr>
+                        <th>الكود</th>
+                        <th>الوحدة / القرية</th>
+                        <th>السعر</th>
+                        <th>الحجوزات</th>
+                        <th class="text-center">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="adminUnitsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- الربط بالأزرار ---
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        if(confirm("هل تود تسجيل الخروج؟")) window.location.href = "index.html";
+    });
+
+    document.getElementById('actionAdd').addEventListener('click', () => alert("توجيه لصفحة الإضافة..."));
+    document.getElementById('actionReports').addEventListener('click', () => alert("عرض التقارير..."));
+    document.getElementById('actionUsers').addEventListener('click', () => alert("عرض المسوقين..."));
+    document.getElementById('actionSupport').addEventListener('click', () => alert("فتح الدعم..."));
+
+    // --- جلب البيانات ---
+    onSnapshot(collection(db, "units"), (snapshot) => {
+        const tbody = document.getElementById('adminUnitsTableBody');
+        tbody.innerHTML = "";
+        let unitsCount = 0, bookingsCount = 0;
+
+        snapshot.forEach((docSnap) => {
+            unitsCount++;
+            const unit = docSnap.data();
+            const booked = unit.bookedDates ? unit.bookedDates.length : 0;
+            bookingsCount += booked;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><span class="text-primary fw-bold">${unit.rentCode}</span></td>
+                <td>
+                    <div class="fw-bold">${unit.chaletName}</div>
+                    <small class="text-muted">${unit.village}</small>
+                </td>
+                <td>${unit.price} ج.م</td>
+                <td><span class="badge bg-secondary">${booked}</span></td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${docSnap.id}" data-code="${unit.rentCode}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('totalUnitsCount').innerText = unitsCount;
+        document.getElementById('totalBookingsCount').innerText = bookingsCount;
+
+        // ربط أزرار الحذف
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = btn.dataset.id;
+                const code = btn.dataset.code;
+                if(confirm(`حذف ${code} نهائياً؟`)) {
+                    await deleteDoc(doc(db, "units", id));
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

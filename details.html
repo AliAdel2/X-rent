@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الشاليه والمعاينة | x-rent.com</title>
+    
+    <link class="js-bootstrap" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { --gold: #c5a059; --primary: #004aad; --bg-app: #f4f6fa; --dark: #0f172a; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-app); color: #334155; padding-bottom: 80px; }
+
+        @media (max-width: 576px) {
+            .container-fluid-mobile { padding-left: 0 !important; padding-right: 0 !important; }
+            .media-card, .info-card, .inline-booking-card { border-radius: 0 !important; border-left: none !important; border-right: none !important; }
+            .main-img-wrapper { height: 240px; }
+            .sub-imgs-grid { height: 80px; }
+            .sub-img-box { height: 80px; }
+        }
+
+        .media-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .info-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        
+        .main-img-wrapper { width: 100%; height: 300px; margin-bottom: 8px; cursor: pointer; position: relative; }
+        .main-img-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+        
+        .sub-imgs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; height: 90px; margin-bottom: 12px; }
+        .sub-img-box { height: 90px; cursor: pointer; position: relative; }
+        .sub-img-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+        .more-overlay-new { position: absolute; inset: 0; background: rgba(0,0,0,0.6); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; border-radius: 12px; }
+
+        .video-box-container { border-top: 1px solid #edf2f7; padding-top: 15px; margin-top: 15px; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 16px; background: #000; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        
+        .no-video-placeholder { 
+            background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 40px 20px; text-align: center; color: #64748b;
+        }
+
+        .spec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        @media (min-width: 768px) { .spec-grid { grid-template-columns: repeat(6, 1fr); } }
+        .spec-card { border: 1px solid #f1f5f9; border-radius: 14px; padding: 10px 4px; text-align: center; background: #f8fafc; }
+        .spec-card b { display: block; font-size: 1.15rem; color: var(--primary); font-weight: 900; }
+        .spec-card small { color: #64748b; font-size: 0.7rem; font-weight: 700; }
+        .spec-card i { color: var(--gold); font-size: 1rem; margin-bottom: 2px; display: block; }
+
+        .inline-booking-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.02); }
+
+        .invoice-receipt-card {
+            background: #fff; border: 2px solid var(--primary); border-radius: 16px;
+            padding: 15px; position: relative; overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+        .invoice-receipt-card::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: var(--gold); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* تعديلات الـ flatpickr المفرود المتناسق مع الموبايل */
+        .flatpickr-calendar.inline {
+            width: 100% !important; box-shadow: none !important;
+            border: 1px solid #e2e8f0 !important; background: #0f172a !important;
+            border-radius: 16px !important; margin: auto; max-width: 100%;
+        }
+        .flatpickr-months .flatpickr-month, .flatpickr-weekday { background: #0f172a !important; color: #fff !important; }
+        .flatpickr-day.is-past-hidden { visibility: hidden !important; pointer-events: none !important; }
+        .booked-day-style { background: #334155 !important; color: #64748b !important; border-radius: 0 !important; text-decoration: line-through; }
+        .edge-day-active { cursor: pointer !important; color: #fff !important; font-weight: bold !important; background: var(--primary) !important; text-decoration: none !important; }
+        
+        .booking-row-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .fancybox__container { z-index: 3000 !important; }
+    </style>
+</head>
+<body>
+
+<nav class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white sticky-top shadow-sm z-3">
+    <a href="index.html" class="btn btn-light rounded-circle shadow-sm"><i class="fas fa-arrow-right"></i></a>
+    <h2 class="m-0 fw-black text-primary">X-rent<span class="text-warning">.PRO</span></h2>
+    <div style="width: 40px;"></div>
+</nav>
+
+<div class="container-fluid container-fluid-mobile px-md-4 mt-md-3">
+    <div class="row g-3">
+        
+        <!-- العمود الأول -->
+        <div class="col-lg-7">
+            <div class="media-card mb-3">
+                <div id="galleryMarkup"></div>
+                
+                <div class="row g-2 mt-2">
+                    <div class="col-6">
+                        <button class="btn btn-light btn-sm w-100 py-2 fw-bold border text-dark" style="font-size: 0.8rem;" onclick="downloadAllPhotos()">
+                            <i class="fas fa-download text-primary me-1"></i> حفظ كافة الصور
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-primary btn-sm w-100 py-2 fw-bold" style="font-size: 0.8rem;" onclick="shareUnitPhotos()">
+                            <i class="fas fa-share-alt me-1"></i> نسخ روابط الصور
+                        </button>
+                    </div>
+                </div>
+
+                <div class="video-box-container">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark small"><i class="fas fa-video text-danger me-1"></i> فيديو معاينة الوحدة:</span>
+                        <button class="btn btn-sm btn-outline-danger border-0 p-0 px-2" id="copyVideoBtn" onclick="shareUnitVideo()" style="display: none;">
+                            <i class="fas fa-copy"></i> نسخ الرابط
+                        </button>
+                    </div>
+                    
+                    <div class="video-wrapper" id="videoWrapperFrame" style="display: none;">
+                        <iframe id="uVideoFrame" src="" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="no-video-placeholder" id="videoPlaceholder">
+                        <i class="fas fa-video-slash fs-3 mb-2 text-muted"></i>
+                        <div class="fw-bold small">لم يتم رفع فيديو معاينة لهذه الوحدة حتى الآن</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card mb-3">
+                <h3 class="fw-black mb-1 text-dark fs-4" id="uVillage">جاري التحميل...</h3>
+                <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt ms-1 text-primary"></i> <span id="uView">---</span> | الكود الموحد: <b id="uCode" class="text-primary">---</b></p>
+
+                <div class="spec-grid mb-3">
+                    <div class="spec-card"><i class="fas fa-bed"></i><b id="uRooms">0</b><small>غرف</small></div>
+                    <div class="spec-card"><i class="fas fa-bath"></i><b id="uBath">0</b><small>حمام</small></div>
+                    <div class="spec-card"><i class="fas fa-snowflake"></i><b id="uAC">0</b><small>تكييف</small></div>
+                    <div class="spec-card"><i class="fas fa-expand"></i><b id="uArea">0</b><small>مساحة</small></div>
+                    <div class="spec-card"><i class="fas fa-users"></i><b id="uGuests">0</b><small>أفراد</small></div>
+                    <div class="spec-card"><i class="fas fa-stairs"></i><b id="uFloor">0</b><small>طابق</small></div>
+                </div>
+
+                <h6 class="fw-bold mb-2 text-dark border-bottom pb-1" style="font-size: 0.9rem;">وصف وتجهيزات الوحدة:</h6>
+                <p id="uDesc" class="text-secondary lh-base m-0" style="font-size: 0.85rem; white-space: pre-line;">---</p>
+            </div>
+
+            <div class="info-card mb-3">
+                <h6 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2" style="font-size: 0.95rem;">
+                    <i class="fas fa-calendar-alt text-success"></i> فترات الحجز المؤكدة القادمة:
+                </h6>
+                <div id="upcomingBookingsContainer">
+                    <div class="text-muted text-center py-3 small">لا توجد حجوزات مستقبلية مسجلة حالياً.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- العمود الثاني -->
+        <div class="col-lg-5">
+            <div class="inline-booking-card sticky-top" style="top: 80px; z-index: 2;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <span class="text-muted small d-block">سعر الليلة:</span>
+                        <div class="h4 fw-black text-primary m-0" id="uPriceBody">0 ج.م</div>
+                    </div>
+                    <span class="badge bg-light text-secondary border px-2.5 py-2 rounded-3 small">تحديث مباشر</span>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold mb-2 text-dark small"><i class="far fa-calendar-check text-primary me-1"></i> حدد تواريخ الإقامة مباشرة من النتيجة:</label>
+                    <input type="text" id="datePicker" class="d-none">
+                    <div id="inlineCalendarContainer"></div>
+                </div>
+                
+                <div id="calcBox" class="invoice-receipt-card mb-3" style="display:none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary small fw-bold">حسبة فترة الحجز المبدئية</span>
+                        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" id="resNightsLabel">0 ليلة</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top border-light">
+                        <span class="text-dark fw-bold small">إجمالي تكلفة الإقامة الفعلي:</span>
+                        <b id="resTotal" class="h5 m-0 text-primary fw-black">0 ج.م</b>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100 py-3 rounded-4 fw-bold shadow-sm" onclick="openBookingPage()">
+                    الاستمرار لتأكيد الحجز <i class="fas fa-arrow-left ms-2"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const unitId = urlParams.get('id');
+    let unitData = null;
+    let globalFlatpickrInstance = null; // متغير للاحتفاظ بنسخة التقويم
+
+    // مصفوفات عامة لحفظ الأيام المغلقة
+    let allBookedDays = [];
+    let startDays = [];
+
+    async function loadUnit() {
+        if(!unitId) return window.location.href = 'index.html';
+        const docSnap = await getDoc(doc(db, "units", unitId));
+        if (docSnap.exists()) {
+            unitData = docSnap.data();
+            renderUI();
+            const bookedDates = unitData.bookedDates || [];
+            initCalendar(bookedDates);
+            renderUpcomingList(bookedDates);
+        } else {
+            alert("الوحدة غير موجودة");
+            window.location.href = 'index.html';
+        }
+    }
+
+    function renderUI() {
+        document.getElementById('uVillage').innerText = unitData.chaletName || unitData.village;
+        document.getElementById('uView').innerText = Array.isArray(unitData.view) ? unitData.view.join(' و ') : (unitData.view || 'إطلالة متميزة');
+        document.getElementById('uCode').innerText = unitData.rentCode || 'N/A';
+        document.getElementById('uRooms').innerText = unitData.rooms || '0';
+        document.getElementById('uBath').innerText = unitData.bathrooms || '0';
+        document.getElementById('uAC').innerText = unitData.acCount || '0';
+        document.getElementById('uArea').innerText = (unitData.area || '0') + "م";
+        document.getElementById('uGuests').innerText = unitData.maxGuests || '0';
+        document.getElementById('uFloor').innerText = unitData.floor || '0';
+        document.getElementById('uDesc').innerText = unitData.description || 'لا يوجد وصف حالي للوحدة.';
+        document.getElementById('uPriceBody').innerText = (unitData.price || 0) + " ج.م";
+
+        const extras = unitData.images || []; 
+        const mainImg = unitData.mainImage || 'https://via.placeholder.com/800x450';
+
+        document.getElementById('galleryMarkup').innerHTML = `
+            <div class="main-img-wrapper" data-fancybox="gallery" href="${mainImg}">
+                <img src="${mainImg}">
+            </div>
+            <div class="sub-imgs-grid">
+                <div class="sub-img-box" data-fancybox="gallery" href="${extras[0] || mainImg}">
+                    <img src="${extras[0] || mainImg}">
+                </div>
+                <div class="sub-img-box" data-fancybox="gallery" href="${extras[1] || mainImg}">
+                    <img src="${extras[1] || mainImg}">
+                </div>
+                <div class="sub-img-box position-relative" data-fancybox="gallery" href="${extras[2] || mainImg}">
+                    <img src="${extras[2] || mainImg}">
+                    ${extras.length > 3 ? `<div class="more-overlay-new">+${extras.length - 2}</div>` : ''}
+                </div>
+            </div>
+        `;
+        Fancybox.bind("[data-fancybox]");
+
+        if (unitData.videoUrl && unitData.videoUrl.trim() !== "") {
+            let videoLink = unitData.videoUrl;
+            if (videoLink.includes('watch?v=')) videoLink = videoLink.replace('watch?v=', 'embed/');
+            else if (videoLink.includes('youtu.be/')) videoLink = videoLink.replace('youtu.be/', 'youtube.com/embed/');
+            
+            document.getElementById('uVideoFrame').src = videoLink;
+            document.getElementById('videoWrapperFrame').style.display = 'block';
+            document.getElementById('copyVideoBtn').style.display = 'inline-block';
+            document.getElementById('videoPlaceholder').style.display = 'none';
+        } else {
+            document.getElementById('videoWrapperFrame').style.display = 'none';
+            document.getElementById('copyVideoBtn').style.display = 'none';
+            document.getElementById('videoPlaceholder').style.display = 'flex';
+        }
+    }
+
+    function formatDateToStr(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function parseRanges(bookedDates) {
+        let parsed = [];
+        bookedDates.forEach(range => {
+            let startStr = ""; let endStr = "";
+            if (typeof range === 'string') {
+                const parts = range.split(/ to | - | إلى /);
+                if (parts.length === 2) { startStr = parts[0].trim(); endStr = parts[1].trim(); }
+            } else if (range.start && range.end) {
+                startStr = range.start; endStr = range.end;
+            }
+            if (startStr && endStr) parsed.push({ start: startStr, end: endStr });
+        });
+        return parsed;
+    }
+
+    function initCalendar(bookedDates) {
+        allBookedDays = []; 
+        startDays = [];
+        let disabledDays = [];
+        const ranges = parseRanges(bookedDates);
+
+        ranges.forEach(r => {
+            startDays.push(r.start);
+            let current = new Date(r.start);
+            let endObj = new Date(r.end);
+            while (current < endObj) {
+                let dStr = formatDateToStr(current);
+                allBookedDays.push(dStr);
+                if (dStr !== r.start) disabledDays.push(dStr);
+                current.setDate(current.getDate() + 1);
+            }
+        });
+
+        const todayFloor = new Date(); todayFloor.setHours(0,0,0,0);
+
+        globalFlatpickrInstance = flatpickr("#datePicker", {
+            mode: "range", minDate: "today", inline: true, locale: "ar", dateFormat: "Y-m-d",
+            disable: disabledDays, appendTo: document.getElementById('inlineCalendarContainer'),
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                const dateStr = formatDateToStr(dayElem.dateObj);
+                if (dayElem.dateObj < todayFloor) dayElem.classList.add("is-past-hidden");
+                if (allBookedDays.includes(dateStr)) {
+                    dayElem.classList.add("booked-day-style");
+                    if (startDays.includes(dateStr)) {
+                        dayElem.classList.add("edge-day-active");
+                        dayElem.classList.remove("flatpickr-disabled");
+                    }
+                }
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 2) {
+                    // فحص مبدئي سريع أثناء التغيير اللحظي
+                    let hasBlock = false;
+                    let checkDate = new Date(selectedDates[0]);
+                    while(checkDate < selectedDates[1]) {
+                        let curStr = formatDateToStr(checkDate);
+                        if (allBookedDays.includes(curStr) && !startDays.includes(curStr)) {
+                            hasBlock = true;
+                            break;
+                        }
+                        checkDate.setDate(checkDate.getDate() + 1);
+                    }
+
+                    if(hasBlock) {
+                        alert("⚠️ عذراً، هذه الفترة تتداخل مع حجز مؤكد آخر في المنتصف! يرجى مراجعة الخانات المشطوبة.");
+                        instance.clear();
+                        document.getElementById('calcBox').style.display = 'none';
+                        return;
+                    }
+
+                    const diff = Math.ceil((selectedDates[1] - selectedDates[0]) / (1000 * 60 * 60 * 24));
+                    document.getElementById('calcBox').style.display = 'block';
+                    document.getElementById('resNightsLabel').innerText = `${diff} ليلة حجز`;
+                    document.getElementById('resTotal').innerText = (diff * (unitData.price || 0)) + " ج.م";
+                } else {
+                    document.getElementById('calcBox').style.display = 'none';
+                }
+            }
+        });
+    }
+
+    function renderUpcomingList(bookedDates) {
+        const container = document.getElementById('upcomingBookingsContainer');
+        const ranges = parseRanges(bookedDates);
+        const todayStr = formatDateToStr(new Date());
+        const upcoming = ranges.filter(r => r.end >= todayStr).sort((a,b) => new Date(a.start) - new Date(b.start));
+
+        if(upcoming.length > 0) {
+            container.innerHTML = "";
+            upcoming.forEach(r => {
+                const diffTime = Math.abs(new Date(r.end) - new Date(r.start));
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                container.innerHTML += `
+                    <div class="booking-row-item">
+                        <div>
+                            <div class="small fw-bold text-dark">من: ${r.start}</div>
+                            <div class="small fw-bold text-dark">إلى: ${r.end}</div>
+                        </div>
+                        <span class="badge bg-primary text-white rounded-pill px-2.5 py-1.5 small">${diffDays} ليالي</span>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    // 🔒 الدالة الحارسة (الحل الجذري والنهائي عند الضغط على زرار التأكيد والذهاب لصفحة الحجز)
+    window.openBookingPage = () => {
+        if (!globalFlatpickrInstance || globalFlatpickrInstance.selectedDates.length !== 2) {
+            return alert("برجاء اختيار فترة الحجز (تاريخ البداية والنهاية) من التقويم أولاً");
+        }
+
+        const selectedDates = globalFlatpickrInstance.selectedDates;
+        let startDate = new Date(selectedDates[0]);
+        let endDate = new Date(selectedDates[1]);
+
+        // الفحص الصارم النهائي: نمشي يوم يوم من البداية للنهاية للتأكد التام
+        let loopDate = new Date(startDate);
+        let absoluteViolation = false;
+
+        while (loopDate < endDate) {
+            let currentDayStr = formatDateToStr(loopDate);
+            
+            // لو اليوم ده يقع ضمن الأيام المحجوزة، وليس هو يوم الـ Check-out المسموح به (startDays)
+            if (allBookedDays.includes(currentDayStr) && !startDays.includes(currentDayStr)) {
+                absoluteViolation = true;
+                break;
+            }
+            loopDate.setDate(loopDate.getDate() + 1);
+        }
+
+        if (absoluteViolation) {
+            alert("🚨 حماية النظام: تم إلغاء العملية فوراً! لقد حاولت حجز فترة تتخطى حجزاً قائماً بالفعل في المنتصف. برجاء اختيار تواريخ فارغة تماماً.");
+            globalFlatpickrInstance.clear();
+            document.getElementById('calcBox').style.display = 'none';
+            return; // كسر الوظيفة ومنعه تماماً من الانتقال
+        }
+
+        // لو تخطى الفحص الصارم بنجاح، يتم تمرير الداتا بأمان
+        const val = document.getElementById('datePicker').value;
+        const nightsText = document.getElementById('resNightsLabel').innerText.replace(' ليلة حجز', '');
+        
+        sessionStorage.setItem('currentBooking', JSON.stringify({
+            unitId: unitId, rentCode: unitData.rentCode, village: unitData.village,
+            dates: val, price: unitData.price, nights: nightsText,
+            total: document.getElementById('resTotal').innerText
+        }));
+        
+        window.location.href = "confirm_booking.html";
+    };
+
+    window.downloadAllPhotos = () => {
+        if(!unitData) return;
+        const allUrls = [unitData.mainImage, ...(unitData.images || [])].filter(u => u);
+        allUrls.forEach((url, index) => {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Chalet_${unitData.rentCode || 'Unit'}_${index+1}`;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            setTimeout(() => { a.click(); document.body.removeChild(a); }, index * 300);
+        });
+    };
+
+    window.shareUnitPhotos = () => {
+        if (!unitData) return;
+        const extras = unitData.images || [];
+        let text = `📸 صور شاليه كود (${unitData.rentCode || 'N/A'}) - قرية ${unitData.chaletName || unitData.village}:\n\n`;
+        text += `1- الرابط الرئيسي:\n${unitData.mainImage}\n\n`;
+        if(extras.length > 0) {
+            text += `🖼️ روابط إضافية:\n`;
+            extras.forEach((url, i) => { text += `${i + 2}- ${url}\n`; });
+        }
+        navigator.clipboard.writeText(text).then(() => { alert("📋 تم نسخ روابط الصور بنجاح!"); });
+    };
+
+    window.shareUnitVideo = () => {
+        if (!unitData || !unitData.videoUrl) return;
+        const text = `🎥 فيديو معاينة الشاليه كود (${unitData.rentCode || 'N/A'}):\n${unitData.videoUrl}`;
+        navigator.clipboard.writeText(text).then(() => { alert("📋 تم نسخ رابط الفيديو!"); });
+    };
+
+    loadUnit();
+</script>
+</body>
+</html>

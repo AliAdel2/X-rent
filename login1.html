@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | Masar Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #3498db; --gold: #c5a059; --dark-bg: #0a0f18; --card-bg: rgba(22, 30, 45, 0.7); --input-bg: #1e293b; }
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: radial-gradient(circle at top right, #004aad, var(--dark-bg) 60%); 
+            color: #e2e8f0; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 15px;
+        }
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .lux-input { 
+            width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 15px; padding: 14px 45px 14px 14px; color: white; transition: 0.3s; font-weight: 600;
+        }
+        .lux-input:focus { border-color: var(--gold); outline: none; background: #243049; box-shadow: 0 0 15px rgba(197, 160, 89, 0.1); }
+        .input-wrapper { position: relative; margin-bottom: 20px; }
+        .input-wrapper i { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; }
+        
+        .btn-login { 
+            background: var(--gold); color: #000; font-weight: 900; padding: 14px; 
+            border-radius: 15px; width: 100%; border: none; font-size: 1.1rem; 
+            transition: 0.4s; box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2);
+        }
+        .btn-login:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(197, 160, 89, 0.3); }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="text-center mb-4">
+        <h3 class="fw-900 text-white mb-1">بوابة الدخول الموحدة</h3>
+        <p class="text-muted small">نظام MASAR PRO v2.0 لإدارة الأصول</p>
+    </div>
+
+    <form id="loginForm">
+        <div class="input-wrapper">
+            <input type="email" id="loginEmail" class="lux-input" placeholder="البريد الإلكتروني" required>
+            <i class="fas fa-envelope"></i>
+        </div>
+        <div class="input-wrapper">
+            <input type="password" id="loginPassword" class="lux-input" placeholder="كلمة المرور" required>
+            <i class="fas fa-lock"></i>
+        </div>
+        <button type="submit" class="btn-login" id="loginBtn">تسجيل الدخول</button>
+    </form>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 🔄 فحص الدخول التلقائي (لو البيانات مخزنة مسبقاً، يحوله فوراً حسب رتبته)
+    function checkAutoLogin() {
+        const cachedRole = localStorage.getItem('userRole');
+        if (cachedRole) {
+            redirectUserByRole(cachedRole);
+        }
+    }
+
+    // 🔀 دالة التوجيه الموحدة بناءً على الصلاحية المسجلة
+    function redirectUserByRole(role) {
+        if (role === 'ادارة') {
+            window.location.href = "admin_dashboard.html";
+        } else if (role === 'مشرف') {
+            window.location.href = "supervisor_dashboard.html";
+        } else if (role === 'مسوق') {
+            window.location.href = "marketer_dashboard.html";
+        } else {
+            window.location.href = "index.html";
+        }
+    }
+
+    // تشغيل فحص الدخول بمجرد فتح الصفحة
+    checkAutoLogin();
+
+    document.getElementById('loginForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.innerText = "جاري التحقق التكتيكي...";
+
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const pass = document.getElementById('loginPassword').value;
+
+        try {
+            // 🔍 فحص البيانات من جدول الـ system_users
+            const q = query(collection(db, "system_users"), where("email", "==", email), where("password", "==", pass));
+            const querySnapshot = await getDocs(q);
+            
+            if (!querySnapshot.empty) {
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                // 💾 التعديل الذهبي: الحفظ في الـ localStorage ليبقى مسجلاً بشكل دائم
+                localStorage.setItem('userRole', userData.role);
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('userName', userData.name); // هنا حفظنا الاسم عشان كل الصفحات تسحبه تلقائي
+
+                alert(`مرحباً بك مجدداً يا كابتن: ${userData.name}`);
+                redirectUserByRole(userData.role);
+            } else {
+                alert("❌ عذراً: البريد الإلكتروني أو كلمة المرور غير صحيحة، أو الحساب غير مسجل.");
+                btn.disabled = false; btn.innerText = "تسجيل الدخول";
+            }
+        } catch (err) {
+            alert("❌ حدث خطأ أثناء الاتصال بالخادم: " + err.message);
+            btn.disabled = false; btn.innerText = "تسجيل الدخول";
+        }
+    };
+</script>
+</body>
+</html>

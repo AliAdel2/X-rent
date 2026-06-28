@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيصال تحصيل نثريات وتلفيات | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #004aad; 
+            --gold: #c5a059; 
+            --bg-light: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-dark: #2d3436;
+            --danger-red: #e74c3c;
+        }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-light); color: var(--text-dark); padding: 20px 0; }
+        .lux-card { background: var(--card-bg); border-radius: 25px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.04); padding: 25px; }
+        .lux-input { background: #ffffff; border: 1px solid #e1e2e6; border-radius: 15px; padding: 12px 20px; color: var(--text-dark); font-weight: 700; }
+        .lux-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 74, 173, 0.1); outline: none; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary), #00337c); color: white; border: none; border-radius: 15px; font-weight: 800; padding: 12px; transition: all 0.3s; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,74,173,0.2); color: white; }
+        .receipt-table { border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .receipt-table th { background: var(--primary); color: white; text-align: center; font-size: 0.85rem; }
+        th { background-color:#0069d9; color:white; text-align:center; vertical-align:middle; white-space:nowrap; }
+        td { text-align:center; vertical-align:middle; white-space:nowrap; }
+        .receipt-table td { text-align: center; vertical-align: middle; font-size: 0.85rem; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- الهيدر -->
+    <div class="d-flex justify-content-between align-items-center mb-4 px-1">
+        <div>
+            <h4 class="fw-black text-dark m-0"><i class="fas fa-hammer text-warning me-1"></i> تحصيل نثريات وغرامات تلفيات</h4>
+            <!-- ⚡ تعديل ترحيبي لربط اسم المشرف بالهيدر -->
+            <p class="text-muted small m-0 mt-1" id="supervisorTextHeader">تسجيل المبالغ المستلمة من النزلاء خارج قيمة عقد الإيجار الأساسي</p>
+        </div>
+        <a href="supervisor_dashboard.html" class="btn btn-sm btn-outline-secondary fw-bold rounded-pill px-3"><i class="fas fa-arrow-right me-1"></i> اللوحة الرئيسية</a>
+    </div>
+
+    <div class="row g-4">
+        <!-- فورمة الإدخال -->
+        <div class="col-lg-5">
+            <div class="lux-card">
+                <h5 class="fw-bold text-primary mb-4"><i class="fas fa-file-invoice-dollar me-1"></i> تحرير إيصال تحصيل جديد</h5>
+                <form id="extraCollectionForm">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">اختر الحجز / العميل المستهدف:</label>
+                        <select id="selectBooking" class="form-select lux-input" required>
+                            <option value="">جاري تحميل النزلاء الحاليين...</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">بند التحصيل النثري:</label>
+                        <select id="collectionCategory" class="form-select lux-input" required>
+                            <option value="تلفيات وكسور">تلفيات وكسور (أجهزة / أثاث / زجاج)</option>
+                            <option value="رسوم تأخير خروج">رسوم تأخير مغادرة (Check-out تأخير)</option>
+                            <option value="خدمات إضافية">خدمات إضافية (نظافة زائدة / مرافق)</option>
+                            <option value="أخرى">بنود أخرى متنوعة</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">المبلغ المحصل فعلياً (ج.م):</label>
+                        <input type="number" id="collectedAmount" class="form-control lux-input" placeholder="أدخل القيمة المستلمة كاش" required min="1">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">تفاصيل وبيان الحركة بالتفصيل:</label>
+                        <textarea id="collectionDetails" class="form-control lux-input" rows="3" placeholder="مثال: كسر فنجان شاي + شرخ في زجاج طاولة التراس" required></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">طريقة الدفع:</label>
+                        <select id="paymentMethod" class="form-select lux-input" required>
+                            <option value="نقدي">نقدي (كاش مالي)</option>
+                            <option value="فودافون كاش">فودافون كاش</option>
+                            <option value="إنستا باي">إنستا باي (InstaPay)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit w-100" id="btnSubmit">
+                        <i class="fas fa-save me-1"></i> حفظ وتوثيق الإيصال فوراً
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- جدول الحركات الأخيرة لليوم -->
+        <div class="col-lg-7">
+            <div class="lux-card">
+                <h5 class="fw-bold text-dark mb-4"><i class="fas fa-history text-gold me-1"></i> إيصالات التحصيل النثري المسجلة اليوم</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover receipt-table border">
+                        <thead>
+                            <tr>
+                                <th>العميل والوحدة</th>
+                                <th>البند</th>
+                                <th>المبلغ</th>
+                                <th>البيان والوصف</th>
+                                <th>المشرف المسؤول</th>
+                            </tr>
+                        </thead>
+                        <tbody id="receiptsTableBody">
+                            <tr>
+                                <td colspan="5" class="py-4 text-muted">جاري فحص الإيصالات الموثقة...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ⚡ التعديل الجوهري: استدعاء جلب الاسم المسجل ديناميكياً من الـ localStorage
+    const currentSystemUser = localStorage.getItem('userName') || "مشرف ميداني";
+    const currentUserRole = localStorage.getItem('userRole');
+
+    // حماية الصفحة والتحقق من هوية وصلاحية المستخدم المستدعى
+    function checkAuthProtection() {
+        if (!localStorage.getItem('userName') || (currentUserRole !== 'مشرف' && currentUserRole !== 'ادارة')) {
+            alert("⚠️ خطأ أمني: غير مسموح بالوصول! يرجى تسجيل الدخول أولاً.");
+            window.location.href = "index.html";
+            return false;
+        }
+        // تحديث النص في الهيدر لعرض اسم الكابتن المسؤول عن الشاشة الحالية
+        document.getElementById('supervisorTextHeader').innerHTML = `المشرف الحالي: <span class="fw-bold text-primary">${currentSystemUser}</span> | تسجيل المبالغ المستلمة خارج عقد الإيجار`;
+        return true;
+    }
+
+    // 1. تحميل النزلاء في قائمة الاختيار
+    async function loadActiveBookings() {
+        const select = document.getElementById('selectBooking');
+        try {
+            const snap = await getDocs(collection(db, "bookings"));
+            let optionsHTML = '<option value="">-- اختر النزيل الحالي --</option>';
+            snap.forEach(doc => {
+                const b = doc.data();
+                optionsHTML += `<option value="${doc.id}" data-name="${b.clientName}" data-village="${b.village || 'شاليه'}">${b.clientName} (${b.village || 'شاليه'} - كود: ${b.rentCode || 'N/A'})</option>`;
+            });
+            select.innerHTML = optionsHTML;
+        } catch (error) {
+            select.innerHTML = '<option value="">خطأ في تحميل البيانات</option>';
+        }
+    }
+
+    // 2. تحميل إيصالات اليوم الحالي للشفافية والمراجعة
+    async function loadTodayReceipts() {
+        const tbody = document.getElementById('receiptsTableBody');
+        const todayStr = new Date().toISOString().split('T')[0];
+        try {
+            const snap = await getDocs(collection(db, "extra_collections"));
+            let rowsHTML = "";
+            let count = 0;
+
+            snap.forEach(doc => {
+                const data = doc.data();
+                const logDate = data.timestamp ? data.timestamp.split('T')[0] : "";
+                
+                if (logDate === todayStr) {
+                    count++;
+                    rowsHTML += `
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">${data.clientName}</div>
+                                <div class="text-muted small" style="font-size:0.75rem">${data.villageName}</div>
+                            </td>
+                            <td><span class="badge bg-light text-primary border">${data.category}</span></td>
+                            <td class="text-danger fw-black">${data.amount} ج.م</td>
+                            <td class="text-muted text-end small" style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${data.details}">${data.details}</td>
+                            <td><span class="text-secondary small">${data.supervisor}</span></td>
+                        </tr>`;
+                }
+            });
+
+            if (count === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-muted">لم يتم تحصيل أي نثريات أو غرامات اليوم حتى الآن.</td></tr>`;
+            } else {
+                tbody.innerHTML = rowsHTML;
+            }
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-danger py-4">خطأ أثناء جلب الإيصالات: ${error.message}</td></tr>`;
+        }
+    }
+
+    // 3. حفظ الإيصال الجديد في الداتابيز
+    document.getElementById('extraCollectionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btnSubmit');
+        const selectB = document.getElementById('selectBooking');
+        const selectedOption = selectB.options[selectB.selectedIndex];
+        
+        if (!selectB.value) {
+            alert("برجاء اختيار العميل أولاً!");
+            return;
+        }
+
+        const payload = {
+            bookingId: selectB.value,
+            clientName: selectedOption.getAttribute('data-name'),
+            villageName: selectedOption.getAttribute('data-village'),
+            category: document.getElementById('collectionCategory').value,
+            amount: parseFloat(document.getElementById('collectedAmount').value) || 0,
+            details: document.getElementById('collectionDetails').value.trim(),
+            paymentMethod: document.getElementById('paymentMethod').value,
+            supervisor: currentSystemUser, // ⚡ يتم رفعه تلقائياً بالاسم الديناميكي الجديد للمشرف الحالي
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            btn.disabled = true;
+            btn.innerText = "جاري حفظ وتوثيق الإيصال...";
+            
+            await addDoc(collection(db, "extra_collections"), payload);
+            
+            alert(`🎉 تم حفظ إيصال التحصيل النثري بنجاح بقيمة ${payload.amount} ج.م`);
+            document.getElementById('extraCollectionForm').reset();
+            loadTodayReceipts();
+        } catch (error) {
+            alert("فشل حفظ البيانات: " + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "حفظ وتوثيق الإيصال فوراً";
+        }
+    });
+
+    window.onload = () => {
+        if (checkAuthProtection()) {
+            loadActiveBookings();
+            loadTodayReceipts();
+        }
+    };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

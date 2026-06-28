@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الإدارة الاحترافية | Masar.com</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { --gold: #c5a059; --primary: #004aad; --bg-app: #f4f6fa; --dark: #0f172a; --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-app); color: #334155; padding-bottom: 60px; }
+
+        /* هيكلة شبكة الكروت المربعة الفخمة */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .card-large {
+            grid-column: span 2;
+        }
+
+        /* كروت الإحصائيات العصرية بنظام ناعم */
+        .stat-card {
+            background: #fff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 24px;
+            padding: 24px; 
+            box-shadow: var(--card-shadow);
+            position: relative; 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .stat-card i { 
+            font-size: 2.2rem; 
+            position: absolute; 
+            left: 24px; 
+            top: 50%; 
+            transform: translateY(-50%);
+            opacity: 0.12;
+        }
+        .card-total { background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; }
+        .card-total i { color: #fff; opacity: 0.08; }
+
+        /* شريط الفلترة المطور والمدمج */
+        .filter-wrapper {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        .filter-input {
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            width: 100%;
+            font-family: 'Cairo', sans-serif;
+        }
+        .filter-input:focus {
+            outline: 2px solid var(--primary);
+            background: #fff;
+            border-color: transparent;
+        }
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* كروت الحجوزات الفخمة البديلة للجداول */
+        .booking-card-item {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .booking-card-item:hover { transform: translateY(-2px); }
+        
+        .badge-code {
+            background: var(--primary);
+            color: #fff;
+            font-weight: 900;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        .badge-village {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .booking-meta-box {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .action-area {
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 14px;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- البار العلوي الأنيق -->
+<nav class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white sticky-top shadow-sm z-3">
+    <h5 class="m-0 fw-black text-primary"><i class="fas fa-shield-halved text-warning me-1"></i> ماسار | الإدارة الحية</h5>
+    <a href="index.html" class="btn btn-sm btn-outline-secondary rounded-3 fw-bold"><i class="fas fa-home me-1"></i> شاشة العرض</a>
+</nav>
+
+<div class="container mt-3 px-3">
+    
+    <!-- 🔍 شريط الفلترة المطور (نصي + تواريخ من وإلى) لمنع زحمة الشاشة -->
+    <div class="filter-wrapper mb-3">
+        <div class="row g-2">
+            <div class="col-12 col-md-6">
+                <label class="filter-label"><i class="fas fa-search me-1"></i> البحث السريع:</label>
+                <input type="text" id="adminSearchInput" class="filter-input" placeholder="ابحث بكود الشاليه، اسم النزيل، أو اسم المسوق...">
+            </div>
+            <div class="col-6 col-md-3">
+                <label class="filter-label"><i class="far fa-calendar-alt me-1"></i> حجز من تاريخ:</label>
+                <input type="date" id="adminDateFrom" class="filter-input">
+            </div>
+            <div class="col-6 col-md-3">
+                <label class="filter-label"><i class="far fa-calendar-check me-1"></i> إلى تاريخ:</label>
+                <div class="d-flex gap-1">
+                    <input type="date" id="adminDateTo" class="filter-input">
+                    <button class="btn btn-light border rounded-3 px-2" onclick="resetDateFilters()" title="إعادة تعيين التواريخ">
+                        <i class="fas fa-undo-alt text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 شبكة الإحصائيات المربعة المحدثة (كبير وتحته كارتين جمب بعض) -->
+    <div class="dashboard-grid mb-4">
+        <!-- الكارت الكبير: إجمالي الحجوزات المعروضة -->
+        <div class="stat-card card-total card-large">
+            <span class="text-white-50 small d-block fw-bold">إجمالي قيمة الحجوزات (المفولترة)</span>
+            <h2 class="fw-black text-white mt-1 mb-0" id="statTotalAmount">0 ج.م</h2>
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <!-- كارت مربع 1: العربين المعروضة -->
+        <div class="stat-card">
+            <span class="text-muted small d-block fw-bold">العربون المحصل</span>
+            <h4 class="fw-black text-dark mt-1 mb-0" id="statTotalDeposit" style="color: var(--gold) !important;">0 ج.م</h4>
+            <i class="fas fa-vault text-warning"></i>
+        </div>
+        <!-- كارت مربع 2: العدد المعروض -->
+        <div class="stat-card">
+            <span class="text-muted small d-block fw-bold">العمليات النشطة</span>
+            <h4 class="fw-black text-dark mt-1 mb-0" id="statBookingCount">0 حجز</h4>
+            <i class="fas fa-receipt text-success"></i>
+        </div>
+    </div>
+
+    <!-- قسم عرض كروت الحجوزات الشيك جداً -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-black text-dark m-0"><i class="fas fa-stream text-primary me-1"></i> طلبات الحجز واغلاقات التقاويم الحالية:</h6>
+    </div>
+
+    <div id="adminBookingsCardsContainer">
+        <div class="text-muted text-center py-5">جاري جلب الحجوزات وتنسيق الكروت...</div>
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allBookingsCached = []; // كاش محلي للفلترة الفورية والذكية
+
+    function fixWhatsAppLink(phone) {
+        if(!phone) return "#";
+        let cleanPhone = String(phone).trim().replace(/\s+/g, '');
+        if (cleanPhone.startsWith('01') && cleanPhone.length === 11) {
+            cleanPhone = '20' + cleanPhone.substring(1);
+        } else if (!cleanPhone.startsWith('20') && cleanPhone.startsWith('1')) {
+            cleanPhone = '20' + cleanPhone;
+        }
+        return `https://wa.me/${cleanPhone}`;
+    }
+
+    function listenToBookings() {
+        onSnapshot(collection(db, "bookings"), (snapshot) => {
+            allBookingsCached = [];
+            snapshot.forEach((docSnap) => {
+                allBookingsCached.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            // تشغيل الفلترة والرندر لأول مرة
+            applyCombinedFilters();
+        });
+    }
+
+    // دالة استخراج أول تاريخ (تاريخ البداية) من صيغة الفلاتبيكر "YYYY-MM-DD إلى YYYY-MM-DD"
+    function getStartDateFromRange(dateRangeStr) {
+        if(!dateRangeStr) return "";
+        const parts = dateRangeStr.split(/ to | - | إلى /);
+        return parts[0] ? parts[0].trim() : "";
+    }
+
+    // تطبيق كل الفلاتر مع بعض (البحث النصي + التواريخ) وتحديث الإحصائيات بناءً على النتيجة الحالية
+    function applyCombinedFilters() {
+        const textQuery = document.getElementById('adminSearchInput').value.toLowerCase().trim();
+        const dateFrom = document.getElementById('adminDateFrom').value; // صيغته YYYY-MM-DD
+        const dateTo = document.getElementById('adminDateTo').value;     // صيغته YYYY-MM-DD
+
+        const filtered = allBookingsCached.filter(b => {
+            // 1. الفحص النصي
+            const matchText = (b.rentCode && b.rentCode.toLowerCase().includes(textQuery)) ||
+                              (b.clientName && b.clientName.toLowerCase().includes(textQuery)) ||
+                              (b.marketer && b.marketer.toLowerCase().includes(textQuery)) ||
+                              (b.village && b.village.toLowerCase().includes(query));
+
+            // 2. فحص التواريخ المتقاطعة
+            const bookingStartDate = getStartDateFromRange(b.dates); // بيطلع مثلاً "2026-06-15"
+            let matchDate = true;
+
+            if (dateFrom && bookingStartDate && bookingStartDate < dateFrom) {
+                matchDate = false;
+            }
+            if (dateTo && bookingStartDate && bookingStartDate > dateTo) {
+                matchDate = false;
+            }
+
+            return matchText && matchDate;
+        });
+
+        // حساب الإحصائيات التفاعلية بناءً على الكروت الظاهرة فقط
+        let totalAmountSum = 0;
+        let totalDepositSum = 0;
+
+        filtered.forEach(b => {
+            const numTotal = parseFloat(String(b.totalAmount).replace(/[^0-9.]/g, '')) || 0;
+            const numDeposit = parseFloat(b.deposit) || 0;
+            totalAmountSum += numTotal;
+            totalDepositSum += numDeposit;
+        });
+
+        // تحديث شاشة الإحصائيات بالداتا المفولترة
+        document.getElementById('statTotalAmount').innerText = totalAmountSum.toLocaleString() + " ج.م";
+        document.getElementById('statTotalDeposit').innerText = totalDepositSum.toLocaleString() + " ج.م";
+        document.getElementById('statBookingCount').innerText = filtered.length + " حجز";
+
+        renderBookingCards(filtered);
+    }
+
+    function renderBookingCards(bookingsArray) {
+        const container = document.getElementById('adminBookingsCardsContainer');
+        if(bookingsArray.length === 0) {
+            container.innerHTML = `<div class="bg-white border rounded-4 text-center py-5 text-muted small">لا توجد حجوزات تطابق البحث أو الفترة المحددة حالياً.</div>`;
+            return;
+        }
+
+        container.innerHTML = "";
+        bookingsArray.forEach((b) => {
+            const waLink = fixWhatsAppLink(b.clientPhone);
+            
+            container.innerHTML += `
+                <div class="booking-card-item">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge-code"><i class="fas fa-hashtag me-1"></i> ${b.rentCode || 'N/A'}</span>
+                        <span class="badge-village">${b.village || 'قرية غير محددة'}</span>
+                    </div>
+
+                    <h6 class="fw-bold text-dark mb-1"><i class="fas fa-user text-muted ms-1 small"></i> ${b.clientName || '---'}</h6>
+                    <div class="small text-muted mb-2">💡 المسوق المسؤول: <b class="text-secondary">${b.marketer || 'عام'}</b></div>
+
+                    <div class="booking-meta-box">
+                        <div class="d-flex justify-content-between mb-1.5" style="font-size: 0.85rem;">
+                            <span class="text-secondary">فترة الإقامة الحية:</span>
+                            <span class="fw-bold text-dark" dir="ltr">${b.dates || '---'}</span>
+                        </div>
+                        <div class="row g-1 pt-2 mt-1 border-top border-light text-center" style="font-size: 0.85rem;">
+                            <div class="col-6 border-end text-start">
+                                <span class="text-muted d-block" style="font-size: 0.75rem;">الإجمالي المطلوب</span>
+                                <b class="text-primary">${b.totalAmount || '0 ج.م'}</b>
+                            </div>
+                            <div class="col-6 text-end">
+                                <span class="text-muted d-block" style="font-size: 0.75rem;">العربون المدفوع</span>
+                                <b class="text-warning">${b.deposit || 0} ج.م</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-area d-flex gap-2">
+                        <a href="${waLink}" target="_blank" class="btn btn-sm btn-light border text-success fw-bold w-100 py-2 rounded-3">
+                            <i class="fab fa-whatsapp me-1"></i> تواصل (واتساب)
+                        </a>
+                        <button class="btn btn-sm btn-outline-danger fw-bold w-100 py-2 rounded-3" onclick="cancelBooking('${b.id}', '${b.unitId}', '${b.dates}')">
+                            <i class="fas fa-trash-alt me-1"></i> إلغاء وحذف الحجز
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // ربط مستمعات الأحداث (Event Listeners) بالفلاتر كلها
+    document.getElementById('adminSearchInput').addEventListener('input', applyCombinedFilters);
+    document.getElementById('adminDateFrom').addEventListener('change', applyCombinedFilters);
+    document.getElementById('adminDateTo').addEventListener('change', applyCombinedFilters);
+
+    // دالة تفريغ فلاتر التاريخ والعودة للوضع الطبيعي
+    window.resetDateFilters = () => {
+        document.getElementById('adminDateFrom').value = "";
+        document.getElementById('adminDateTo').value = "";
+        applyCombinedFilters();
+    };
+
+    window.cancelBooking = async (bookingId, unitId, dateRangeStr) => {
+        if(!confirm("تنبيــه: هل أنت متأكد من رغبتك في إلغاء هذا الحجز بالكامل؟ سيتم مسح الفاتورة وفتح الأيام تلقائياً في تقويم الشاليه.")) return;
+
+        try {
+            await deleteDoc(doc(db, "bookings", bookingId));
+            const unitRef = doc(db, "units", unitId);
+            const unitSnap = await getDoc(unitRef);
+
+            if(unitSnap.exists()) {
+                const currentDates = unitSnap.data().bookedDates || [];
+                const updatedDates = currentDates.filter(d => d !== dateRangeStr);
+                await updateDoc(unitRef, { bookedDates: updatedDates });
+            }
+            alert("🗑️ تم إلغاء طلب الحجز وفتح التقويم فوراً.");
+        } catch (error) {
+            console.error(error);
+            alert("حدث خطأ، برجاء المحاولة مرة أخرى.");
+        }
+    };
+
+    listenToBookings();
+</script>
+</body>
+</html>

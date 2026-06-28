@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدعم والمساعدة | Masar PRO</title>
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg-light: #f4f7fc;
+            --card-white: #ffffff;
+            --glass-border: rgba(0, 74, 173, 0.06);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #004aad;
+            --primary-light: #edf4fe;
+            --success: #2ecc71;
+            --success-light: #e8fbf0;
+            --warning: #f39c12;
+            --gold: #c5a059;
+        }
+
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--bg-light);
+            color: var(--text-main); 
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            padding: 12px 16px; 
+            border-radius: 14px;
+            margin-top: 12px; 
+            box-shadow: 0 4px 15px rgba(0, 74, 173, 0.01);
+        }
+
+        .btn-back {
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            background: #ffffff;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+
+        /* كروت الاتصال السريع الملمومة */
+        .support-card {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 12px 14px;
+            box-shadow: 0 4px 12px rgba(0, 74, 173, 0.01);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .support-icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-left: 12px;
+        }
+
+        .bg-wp { background: #e8fbf0; color: #2ecc71; }
+        .bg-phone { background: #edf4fe; color: #004aad; }
+
+        .btn-contact {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: none;
+            text-decoration: none;
+        }
+        .btn-wp { background: #2ecc71; color: #fff; }
+        .btn-phone { background: var(--primary); color: #fff; }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin: 15px 0 8px 0;
+            padding-right: 4px;
+        }
+
+        /* نمط الأسئلة الشائعة المضغوط */
+        .faq-item {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            overflow: hidden;
+        }
+
+        .faq-header {
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: #ffffff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .faq-header:hover { background: #f8fafc; }
+
+        .faq-body {
+            padding: 0 14px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            background: #fafbfe;
+        }
+
+        .faq-item.active .faq-body {
+            padding: 10px 14px;
+            max-height: 200px; /* يعطي مساحة للنص عند الفتح */
+            border-top: 1px dashed var(--glass-border);
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+        .faq-icon { transition: transform 0.2s; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- رأس الصفحة -->
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h6 class="fw-black m-0" style="color: var(--primary); font-size: 1.05rem;"><i class="fas fa-headset me-1"></i> مركز المساعدة والدعم</h6>
+            <p class="text-muted small mb-0" style="font-size: 0.75rem;">تواصل معنا مباشرة أو تصفح الحلول السريعة</p>
+        </div>
+        <button class="btn btn-back btn-sm px-2 py-1" style="font-size: 0.8rem;" onclick="history.back()">
+            <i class="fas fa-arrow-right me-1"></i> عودة
+        </button>
+    </div>
+
+    <!-- القسم الأول: قنوات الاتصال المباشر الفوري -->
+    <div class="section-title"><i class="fas fa-paper-plane me-1"></i> إتصال فوري بنقرة واحدة</div>
+    
+    <!-- كارت الواتساب السريع -->
+    <div class="support-card">
+        <div class="d-flex align-items-center">
+            <div class="support-icon-box bg-wp">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <div>
+                <h6 class="m-0" style="font-size: 0.85rem; font-weight: 700;">المحادثة الفورية عبر واتساب</h6>
+                <p class="text-muted m-0" style="font-size: 0.65rem;">أسرع وسيلة للحصول على رد فني</p>
+            </div>
+        </div>
+        <a href="https://wa.me/201000448452" target="_blank" class="btn-contact btn-wp">
+            <i class="fab fa-whatsapp me-1"></i> راسلنا
+        </a>
+    </div>
+
+    <!-- كارت المكالمات الهاتفية المباشرة -->
+    <div class="support-card">
+        <div class="d-flex align-items-center">
+            <div class="support-icon-box bg-phone">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <div>
+                <h6 class="m-0" style="font-size: 0.85rem; font-weight: 700;">الاتصال الهاتفي الساخن</h6>
+                <p class="text-muted m-0" style="font-size: 0.65rem;">للطوارئ ومشاكل تسجيل وتأكيد الحجز</p>
+            </div>
+        </div>
+        <a href="tel:+201000448452" class="btn-contact btn-phone">
+            <i class="fas fa-phone-alt me-1"></i> اتصل الآن
+        </a>
+    </div>
+
+    <!-- القسم الثاني: الأسئلة الشائعة وحلولها السريعة -->
+    <div class="section-title"><i class="fas fa-question-circle me-1"></i> الأسئلة الشائعة والحلول الذكية</div>
+
+    <div class="faq-container">
+        <!-- السؤال الأول -->
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-header">
+                <span>ماذا أفعل لو قمت بتسجيل حجز بالخطأ؟</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-body">
+                يرجى الانتقال الفوري للوحة التحكم واختيار "سجل الحجوزات"، ثم طلب إلغاء أو تعديل الحجز. إذا تم تأكيد الحجز من قِبل الإدارة، يجب التواصل مع الدعم الفني فوراً لإعادة إتاحة الوحدة في النظام.
+            </div>
+        </div>
+
+        <!-- السؤال الثاني -->
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-header">
+                <span>كيف تظهر الوحدات "المتاحة" للمسوقين؟</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-body">
+                يقوم النظام بالاستماع اللحظي (Real-time) لقاعدة بيانات Firebase. بمجرد قيام الإدارة بتغيير حالة أي شاليه إلى "متاح"، تظهر فوراً في شاشتك دون الحاجة لتحديث الصفحة.
+            </div>
+        </div>
+
+        <!-- السؤال الثالث -->
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-header">
+                <span>العميل يريد دفع مقدم الحجز، كيف أسجله؟</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-body">
+                أثناء ملء استمارة "تسجيل حجز جديد"، ستجد حقل مخصص باسم "المبلغ المدفوع (جدية حجز)"، اكتب فيه المبلغ الذي حوله العميل، وسيقوم النظام تلقائياً باحتساب المتبقي عليه في الفاتورة.
+            </div>
+        </div>
+
+        <!-- السؤال الرابع -->
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-header">
+                <span>ما هي صلاحيات حساب المسوق؟</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-body">
+                حساب المسوق يتيح لك فحص الشاليهات، تصفح العروض الحصرية، الاطلاع على جدول الإشغال العام، وتسجيل حجوزات جديدة لعملائك؛ بينما تظل صلاحيات حذف الوحدات وتعديل الحسابات المالية الكبرى محصورة للإدارة.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // دالة الأكورديون الخفيفة جداً لفتح وقفل الأسئلة
+    function toggleFaq(element) {
+        const isActive = element.classList.contains('active');
+        
+        // إغلاق أي سؤال مفتوح آخر للمحافظة على ضغط الشاشة
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // فتح العنصر الحالي إذا لم يكن مفتوحاً
+        if (!isActive) {
+            element.classList.add('active');
+        }
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

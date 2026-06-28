@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة المسوق | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg-light: #f4f7fc;
+            --card-white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 74, 173, 0.08);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            
+            /* ألوان الهوية الفاتحة */
+            --primary: #004aad;
+            --primary-light: #edf4fe;
+            --success: #2ecc71;
+            --success-light: #e8fbf0;
+            --gold: #f39c12;
+            --gold-light: #fef5e7;
+
+            /* الألوان الجديدة للكروت الإضافية لتتماشى مع التصميم */
+            --cyan: #00cec9;
+            --cyan-light: #e6fcfc;
+            --purple: #6c5ce7;
+            --purple-light: #f3f0ff;
+            --danger: #d63031;
+            --danger-light: #ffeaea;
+        }
+
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--bg-light);
+            color: var(--text-main); 
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        /* بار الترحيب الفاتح الأنيق */
+        .welcome-bar {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            padding: 20px; 
+            border-radius: 20px;
+            margin-top: 20px; 
+            box-shadow: 0 10px 25px rgba(0, 74, 173, 0.04);
+        }
+
+        /* كروت الإحصائيات الفاتحة النظيفة */
+        .stat-card {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; 
+            padding: 15px;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            height: 115px; 
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 74, 173, 0.03);
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 74, 173, 0.08);
+        }
+        .stat-card i { 
+            font-size: 1.8rem; 
+            position: absolute; 
+            left: 15px; 
+            bottom: 15px; 
+            opacity: 0.12; 
+        }
+        .stat-card h3 { 
+            font-weight: 800; 
+            margin: 5px 0 0; 
+            font-size: 1.3rem; 
+        }
+        .stat-card p { 
+            font-size: 0.8rem; 
+            color: var(--text-muted); 
+            margin: 0; 
+            font-weight: 700; 
+        }
+
+        /* شبكة أزرار التحكم - عرض كامل افتراضي للموبايل */
+        .hub-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px; 
+            margin-top: 20px;
+        }
+
+        /* كروت الوصول السريع المدمجة والبارزة بكامل العرض */
+        .hub-card-interactive {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: row; 
+            align-items: center;
+            text-align: right;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 18px rgba(0, 74, 173, 0.04); 
+            width: 100%;
+        }
+        
+        .hub-card-interactive:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 74, 173, 0.1);
+            border-color: rgba(0, 74, 173, 0.2);
+        }
+
+        .hub-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-left: 15px; 
+            flex-shrink: 0;
+        }
+
+        .hub-card-text-zone {
+            flex-grow: 1;
+        }
+
+        .hub-card-interactive h5 {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin: 0;
+            color: #0f172a;
+        }
+        .hub-card-interactive p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 4px 0 0 0;
+            line-height: 1.4;
+        }
+
+        /* تحويل التقسيم إلى شبكة (Grid) فقط على التابلت والكمبيوتر لشاشات العرض الكبيرة */
+        @media (min-width: 768px) {
+            .hub-grid { 
+                display: grid;
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 15px;
+            }
+            .hub-card-interactive {
+                padding: 20px;
+            }
+            .hub-icon-wrapper {
+                width: 46px;
+                height: 46px;
+            }
+            .stat-card h3 {
+                font-size: 1.6rem;
+            }
+        }
+
+        .btn-logout {
+            border: 1px solid rgba(0,0,0,0.08);
+            color: #e74c3c;
+            background: #fdf2f2;
+            transition: all 0.3s;
+            border-radius: 12px;
+        }
+        .btn-logout:hover {
+            background: #e74c3c;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="welcome-bar d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h5 class="fw-black m-0" style="color: var(--primary);">بوابة المسوق الذكية</h5>
+            <p class="text-muted small mb-0 mt-1">أهلاً بك مجدداً: <span id="marketerNameTitle" class="text-dark fw-bold">...</span></p>
+        </div>
+        <button onclick="logout()" class="btn btn-logout fw-bold btn-sm px-3 py-2"><i class="fas fa-sign-out-alt me-1"></i> خروج</button>
+    </div>
+
+    <div class="row g-2 mt-1">
+        <div class="col-6 col-md-3">
+            <div class="stat-card" style="border-bottom: 3px solid var(--primary);">
+                <div>
+                    <p>الحجوزات النشطة</p>
+                    <h3 id="myBookingsCount" style="color: var(--primary);">0 <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">حجز</span></h3>
+                </div>
+                <i class="fas fa-calendar-check" style="color: var(--primary);"></i>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card" style="border-bottom: 3px solid var(--gold);">
+                <div>
+                    <p>إجمالي المبيعات</p>
+                    <h3 id="myBookingsSum" style="color: var(--gold);">0 <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">ج.م</span></h3>
+                </div>
+                <i class="fas fa-chart-line" style="color: var(--gold);"></i>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card" style="border-bottom: 3px solid var(--success);">
+                <div>
+                    <p>العمولات المستحقة</p>
+                    <h3 id="myTotalCommissions" style="color: var(--success);">0 <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">ج.م</span></h3>
+                </div>
+                <i class="fas fa-wallet" style="color: var(--success);"></i>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card" style="border-bottom: 3px solid #6c5ce7;">
+                <div>
+                    <p>الليالي المباعة</p>
+                    <h3 id="myTotalNights" style="color: #6c5ce7;">0 <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">ليلة</span></h3>
+                </div>
+                <i class="fas fa-moon" style="color: #6c5ce7;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="hub-grid">
+        
+        <a href="new_booking.html" class="hub-card-interactive">
+            <div class="hub-icon-wrapper" style="background: var(--primary-light); color: var(--primary);">
+                <i class="fas fa-calendar-plus"></i>
+            </div>
+            <div class="hub-card-text-zone">
+                <h5>تسجيل حجز جديد</h5>
+                <p>إضافة بيانات النزيل وتأكيد السكن فوراً</p>
+            </div>
+        </a>
+        <a href="master_plan.html" class="hub-card-interactive">
+            <div class="hub-icon-wrapper" style="background: var(--primary-light); color: var(--primary);">
+                <i class="fas fa-calendar-plus"></i>
+            </div>
+            <div class="hub-card-text-zone">
+                <h5>جدول الحجوزات  </h5>
+                <p>رؤية جميع الشاليهات ومعرفة بيان الحجوزات </p>
+            </div>
+        </a>
+        
+        <a href="booking.html" class="hub-card-interactive">
+            <div class="hub-icon-wrapper" style="background: var(--purple-light); color: var(--purple);">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="hub-card-text-zone">
+                <h5> الشاليهات</h5>
+                <p>رؤية صور وفيديوهات الشاليهات وتفاصبل الحجوزات  </p>
+            </div>
+        </a>
+        <a href="my_bookings.html" class="hub-card-interactive">
+            <div class="hub-icon-wrapper" style="background: var(--success-light); color: var(--success);">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="hub-card-text-zone">
+                <h5>حجوزاتي وعمولاتي</h5>
+                <p>تتبع الأرباح الشخصية وحالات دفع العمولات</p>
+            </div>
+        </a>
+
+        <a href="view_units.html" class="hub-card-interactive">
+            <div class="hub-icon-wrapper" style="background: var(--gold-light); color: var(--gold);">
+                <i class="fas fa-hotel"></i>
+            </div>
+            <div class="hub-card-text-zone">
+                <h5>الشاليهات المتاحة</h5>
+                <p>فحص الوحدات الشاغرة وأسعار الليلة الحالية</p>
+            </div>
+        </a>
+
+        <a href="marketing_offers.html" class="hub-card-interactive">
+            <div class="hub-icon-wrapper" style="background: var(--cyan-light); color: var(--cyan);">
+                <i class="fas fa-tags"></i>
+            </div>
+            <div class="hub-card-text-zone">
+                <h5>عروض التسويق الحصرية</h5>
+                <p>الخصومات والامتيازات الترويجية النشطة</p>
+            </div>
+        </a>
+
+        <a href="calendar.html" class="hub-card-interactive">
+            <div class="hub-icon-wrapper" style="background: var(--purple-light); color: var(--purple);">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="hub-card-text-zone">
+                <h5>جدول الإشغال العام</h5>
+                <p>رؤية التواريخ الشاغرة ونسب حجز المصيف</p>
+            </div>
+        </a>
+
+        <a href="support.html" class="hub-card-interactive">
+            <div class="hub-icon-wrapper" style="background: var(--danger-light); color: var(--danger);">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div class="hub-card-text-zone">
+                <h5>الدعم والمساعدة</h5>
+                <p>إرسال طلبات الدعم وبلاغات الصيانة للإدارة</p>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // التحويل إلى localStorage ليبقى الحساب مسجلاً بشكل دائم
+    const localUserData = localStorage.getItem('loggedUser');
+    let currentUserName = "مسوق غير معروف";
+    let currentUserEmail = null;
+    let currentUserRole = null;
+
+    if (localUserData) {
+        const parsedUser = JSON.parse(localUserData);
+        currentUserName = parsedUser.name;
+        currentUserEmail = parsedUser.email;
+        currentUserRole = parsedUser.role;
+    }
+
+    if (!currentUserEmail || (currentUserRole !== 'مسوق' && currentUserRole !== 'ادارة')) {
+        alert("⚠️ حماية النظام: وصول غير مصرح به! يرجى تسجيل الدخول أولاً.");
+        window.location.href = "index.html";
+    } else {
+        document.getElementById('marketerNameTitle').innerText = currentUserName;
+        listenToMarketerMetrics();
+    }
+
+    function listenToMarketerMetrics() {
+        const q = query(collection(db, "bookings"), where("marketerEmail", "==", currentUserEmail));
+
+        onSnapshot(q, (snapshot) => {
+            let bookingsCount = 0;
+            let totalSalesSum = 0;
+            let totalCommissions = 0;
+            let totalNightsCount = 0;
+
+            snapshot.forEach((docSnap) => {
+                const b = docSnap.data();
+                bookingsCount++;
+
+                totalSalesSum += parseFloat(b.totalAmount || 0);
+                totalCommissions += parseFloat(b.marketerCommissionAmount || 0);
+                totalNightsCount += parseInt(b.nightsCount || 0);
+            });
+
+            document.getElementById('myBookingsCount').innerHTML = `${bookingsCount} <span style="font-size: 0.85rem; color: var(--text-muted);">حجز</span>`;
+            document.getElementById('myBookingsSum').innerHTML = `${totalSalesSum.toLocaleString()} <span style="font-size: 0.85rem; color: var(--text-muted);">ج.م</span>`;
+            document.getElementById('myTotalCommissions').innerHTML = `${totalCommissions.toLocaleString()} <span style="font-size: 0.85rem; color: var(--text-muted);">ج.م</span>`;
+            document.getElementById('myTotalNights').innerHTML = `${totalNightsCount} <span style="font-size: 0.85rem; color: var(--text-muted);">ليلة</span>`;
+        });
+    }
+
+    // تنظيف البيانات التام من الـ localStorage عند تسجيل الخروج الفعلي فقط
+    window.logout = () => {
+        localStorage.clear();
+        sessionStorage.clear(); // لزيادة التأكيد والمسح الشامل للجلستين
+        window.location.href = "index.html";
+    };
+</script>
+</body>
+</html>

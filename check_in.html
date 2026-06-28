@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة مشرفي التسكين والتحصيل الميداني | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #004aad; 
+            --gold: #c5a059; 
+            --bg-light: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #2d3436;
+        }
+        
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--bg-light); 
+            color: var(--text-dark); 
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        /* كروت التسكين المارنة */
+        .super-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .super-card::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary);
+        }
+        
+        /* 🟢 لو تم التحصيل كاملاً ولسه مقيم */
+        .super-card.settled::before {
+            background: #2ecc71; 
+        }
+        
+        /* 🏁 لو الحجز انتهى والعميل عمل خروج بالفعل (تعديل رمادي هادئ) */
+        .super-card.archived {
+            background: #f1f2f6;
+            opacity: 0.85;
+            box-shadow: none;
+        }
+        .super-card.archived::before {
+            background: #7f8c8d; 
+        }
+
+        .lux-badge { background: rgba(0, 74, 173, 0.08); color: var(--primary); font-weight: 800; padding: 5px 12px; border-radius: 12px; font-size: 0.75rem; }
+        .marketer-badge { background: rgba(197, 160, 89, 0.12); color: var(--gold); font-weight: 700; padding: 4px 10px; border-radius: 10px; font-size: 0.75rem; }
+        
+        /* شارات الحالات */
+        .status-badge-success { background: rgba(46, 204, 113, 0.15); color: #27ae60; font-weight: 800; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; }
+        .status-badge-pending { background: rgba(241, 196, 15, 0.15); color: #d35400; font-weight: 800; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; }
+        .status-badge-archived { background: rgba(127, 140, 141, 0.15); color: #7f8c8d; font-weight: 800; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; }
+
+        /* الصندوق المالي */
+        .finance-box {
+            background: #f1f2f6;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .super-card.archived .finance-box { background: #e4e7eb; }
+        
+        .finance-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid #e1e2e6; }
+        .finance-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .lux-input { 
+            background: #ffffff; 
+            border: 1px solid #e1e2e6; 
+            border-radius: 15px; 
+            padding: 12px 20px; 
+            color: var(--text-dark); 
+            font-weight: 700; 
+            font-size: 1rem;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .lux-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 74, 173, 0.1); outline: none; }
+        .modal-content { border-radius: 25px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    </style>
+</head>
+<body>
+
+<div class="container mb-5">
+    <!-- الهيدر الرئيسي -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 px-1">
+        <div>
+            <h4 class="fw-black text-dark m-0"><i class="fas fa-user-shield text-gold me-1"></i> بوابة الدخول والتسكين الميداني اليومي</h4>
+            <p class="text-muted small m-0 mt-1">عرض الحجوزات بناءً على تاريخ وصول العميل وتصفية الحسابات</p>
+        </div>
+        <a href="master_plan.html" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3"><i class="fas fa-th me-1"></i> المخطط الشهري</a>
+    </div>
+
+    <!-- الفلتر بالتاريخ الذكي الفردي -->
+    <div class="card p-3 border-0 shadow-sm rounded-4 mb-4">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <label for="targetDatePicker" class="fw-bold text-dark m-0"><i class="far fa-calendar-alt text-primary me-1"></i> اختر تاريخ التسكين المُراد عرضه:</label>
+            <input type="date" id="targetDatePicker" class="form-control lux-input" onchange="loadSupervisionData()">
+        </div>
+    </div>
+
+    <!-- حاوية الكروت -->
+    <div class="row g-4" id="cardsContainer">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="text-muted mt-2">جاري جرد حجوزات التاريخ المحدد والتحقق من الحالات المالية والـ Check-out...</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= 💸 موديول التحصيل المالي والتسكين الفوري ================= -->
+<div class="modal fade" id="actionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-2">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-primary"><i class="fas fa-cash-register me-2 text-gold"></i> نافذة تحصيل وتسجيل دفعة</h5>
+                <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="financialForm">
+                    <input type="hidden" id="modalBookingId">
+                    
+                    <div class="bg-light p-3 rounded-4 mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">المستأجر الحالي:</span>
+                            <span class="fw-bold text-dark" id="modalClientName">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">إجمالي تكلفة الإيجار:</span>
+                            <span class="fw-bold text-dark" id="modalTotalRent">0 ج.م</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">العربون / المدفوع سابقاً:</span>
+                            <span class="fw-bold text-success" id="modalDeposit">0 ج.م</span>
+                        </div>
+                        <div id="modalExtraRow" class="d-none mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted small" id="modalExtraTitle">رسوم أخرى:</span>
+                                <span class="fw-bold text-secondary" id="modalExtraAmount">0 ج.م</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                            <span class="fw-bold text-danger">صافي المتبقي المطلوب تحصيله:</span>
+                            <span class="fw-bold text-danger fs-5" id="modalRemainingAmount">0 ج.م</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted mb-1">المبلغ المحصل الآن من العميل (ج.م):</label>
+                        <input type="number" id="inputCollectAmount" class="form-control lux-input w-100" style="max-width: none;" placeholder="أدخل القيمة المستلمة" required min="0">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted mb-1">طريقة وسيلة الدفع:</label>
+                        <select id="selectPayMethod" class="form-select lux-input w-100" style="max-width: none;" required>
+                            <option value="نقدي">نقدي (كاش مالي)</option>
+                            <option value="فودافون كاش">فودافون كاش</option>
+                            <option value="إنستا باي">إنستا باي (InstaPay)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted mb-1">اسم المشرف المستلم ميدانياً:</label>
+                        <input type="text" id="inputReceiverName" class="form-control lux-input w-100" style="max-width: none;" placeholder="اكتب اسم المستلم المباشر" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" id="btnSubmitFinancial" onclick="submitFinancialUpdate()">تأكيد واستلام النقدية</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const currentSystemUser = "علي عادل"; 
+
+    function setDefaultDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('targetDatePicker').value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    async function loadSupervisionData() {
+        const container = document.getElementById('cardsContainer');
+        const selectedDate = document.getElementById('targetDatePicker').value;
+
+        if (!selectedDate) {
+            container.innerHTML = `<div class="col-12 text-center text-muted py-4">برجاء تحديد التاريخ أولاً للمتابعة.</div>`;
+            return;
+        }
+
+        try {
+            const bookingsSnap = await getDocs(collection(db, "bookings"));
+            let htmlContent = "";
+            let hasCheckIns = false;
+
+            bookingsSnap.forEach(bDoc => {
+                const booking = bDoc.data();
+                const dateRangeStr = booking.dates || "";
+                
+                let checkInDate = "";
+                if (dateRangeStr.includes("إلى")) {
+                    checkInDate = dateRangeStr.split("إلى")[0].trim();
+                }
+
+                if (checkInDate === selectedDate) {
+                    hasCheckIns = true;
+
+                    const totalRent = parseFloat(booking.totalAmount) || 0;
+                    const deposit = parseFloat(booking.deposit) || 0;
+                    const extraAmount = parseFloat(booking.extraAmount) || 0;
+                    const extraPaid = booking.extraPaidStatus || "لا";
+                    
+                    let remaining = totalRent - deposit;
+                    if (extraPaid === "لا") { remaining += extraAmount; }
+
+                    // 🏁 فحص حالة الـ Check-out أولاً
+                    const isCheckedOut = booking.checkOutStatus === "تم الخروج";
+                    const isSettled = remaining <= 0;
+
+                    // تحديد شكل الشارة ولون الكارت والزرار بناءً على الحالة المركبة
+                    let cardClass = "";
+                    let statusBadge = "";
+                    let btnHTML = "";
+
+                    if (isCheckedOut) {
+                        // الحجز منتهي ومغلق بالكامل 🏁
+                        cardClass = "archived";
+                        statusBadge = `<span class="status-badge-archived"><i class="fas fa-archive me-1"></i> تم المغادرة وإغلاق الحجز 🏁</span>`;
+                        btnHTML = `
+                            <button class="btn btn-secondary w-100 fw-bold py-2" style="border-radius:12px;" disabled>
+                                <i class="fas fa-lock me-1"></i> تم الخروج (الحجز مغلق)
+                            </button>`;
+                    } else if (isSettled) {
+                        // مقيم وخالص حسابياً 🟢
+                        cardClass = "settled";
+                        statusBadge = `<span class="status-badge-success"><i class="fas fa-check-circle me-1"></i> تم التسكين والتحصيل كاملاً 🟢</span>`;
+                        btnHTML = `
+                            <button class="btn btn-success w-100 fw-bold py-2" style="border-radius:12px;" 
+                                onclick="openActionModal('${bDoc.id}', '${booking.clientName}', ${totalRent}, ${deposit}, '${booking.extraTitle || 'رسوم أخرى'}', ${extraAmount}, '${extraPaid}', ${remaining})">
+                                <i class="fas fa-check me-1"></i> تحديث دفعة إضافية ثانية
+                            </button>`;
+                    } else {
+                        // مقيم وعليه متبقي مالي 🟡
+                        cardClass = "";
+                        statusBadge = `<span class="status-badge-pending"><i class="fas fa-clock me-1"></i> انتظار تحصيل ومتبقي 🟡</span>`;
+                        btnHTML = `
+                            <button class="btn btn-primary w-100 fw-bold py-2" style="border-radius:12px;" 
+                                onclick="openActionModal('${bDoc.id}', '${booking.clientName}', ${totalRent}, ${deposit}, '${booking.extraTitle || 'رسوم أخرى'}', ${extraAmount}, '${extraPaid}', ${remaining})">
+                                <i class="fas fa-cash-register me-1"></i> تحصيل وتسكين فوري
+                            </button>`;
+                    }
+
+                    htmlContent += `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="super-card p-3 ${cardClass}">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="fw-bold text-dark m-0" style="font-size:1.15rem">${booking.clientName}</h5>
+                                        <span class="lux-badge">كود: ${booking.rentCode || 'N/A'}</span>
+                                    </div>
+                                    
+                                    <div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
+                                        <span class="marketer-badge"><i class="fas fa-user-tie me-1"></i> المسوق: ${booking.marketer || "عام"}</span>
+                                        <span class="badge bg-light text-dark border small fw-bold" style="border-radius:10px">${booking.village || 'شاليه'}</span>
+                                    </div>
+                                    
+                                    <div class="text-muted small mb-1"><i class="fas fa-phone-alt text-primary ms-1"></i> تليفون: <span class="fw-bold text-dark">${booking.clientPhone || 'غير مسجل'}</span></div>
+                                    <div class="text-muted small mb-1"><i class="far fa-calendar-alt text-gold ms-1"></i> الإقامة: <b class="text-primary" dir="ltr">${dateRangeStr}</b></div>
+                                    
+                                    <!-- شارة الحالة الذكية المحدثة -->
+                                    <div class="my-3 text-center">
+                                        ${statusBadge}
+                                    </div>
+
+                                    <div class="finance-box shadow-sm">
+                                        <div class="finance-row text-muted"><span>إجمالي الإيجار:</span><b class="text-dark">${totalRent} ج.م</b></div>
+                                        <div class="finance-row text-muted"><span>العربون المدفوع:</span><b class="text-primary">${deposit} ج.م</b></div>
+                                        ${extraAmount > 0 ? `<div class="finance-row text-muted"><span>رسوم (${booking.extraTitle || 'أخرى'}):</span><b class="text-secondary">${extraAmount} ج.م (${extraPaid === 'نعم' ? 'مدفوعة' : 'متبقية'})</b></div>` : ''}
+                                        <div class="d-flex justify-content-between pt-2 mt-1">
+                                            <span class="text-danger fw-bold fs-6">المتبقي للتسليم:</span><b class="text-danger fw-black fs-5">${remaining} ج.م</b>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    ${btnHTML}
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            if (!hasCheckIns) {
+                container.innerHTML = `<div class="col-12 text-center text-muted py-5"><i class="fas fa-folder-open fa-2x mb-2 d-block text-gold"></i>لا توجد حجوزات مجدولة للتسكين في هذا التاريخ.</div>`;
+            } else {
+                container.innerHTML = htmlContent;
+            }
+
+        } catch (error) {
+            container.innerHTML = `<div class="col-12 text-center text-danger py-4">❌ خطأ فني أثناء جلب البيانات: ${error.message}</div>`;
+        }
+    }
+
+    window.openActionModal = (bookingId, clientName, totalRent, deposit, extraTitle, extraAmount, extraPaid, remaining) => {
+        document.getElementById('modalBookingId').value = bookingId;
+        document.getElementById('modalClientName').innerText = clientName;
+        document.getElementById('modalTotalRent').innerText = totalRent + " ج.م";
+        document.getElementById('modalDeposit').innerText = deposit + " ج.م";
+        
+        const extraRow = document.getElementById('modalExtraRow');
+        if (extraAmount > 0) {
+            extraRow.classList.remove('d-none');
+            document.getElementById('modalExtraTitle').innerText = `رسوم (${extraTitle}):`;
+            document.getElementById('modalExtraAmount').innerText = `${extraAmount} ج.م (${extraPaid === 'نعم' ? 'مدفوعة مسبقاً' : 'مطلوبة حالياً'})`;
+        } else {
+            extraRow.classList.add('d-none');
+        }
+
+        document.getElementById('modalRemainingAmount').innerText = remaining + " ج.م";
+        document.getElementById('inputCollectAmount').value = remaining > 0 ? remaining : 0; 
+        document.getElementById('inputReceiverName').value = "";
+
+        const myModal = new bootstrap.Modal(document.getElementById('actionModal'));
+        myModal.show();
+    };
+
+    window.submitFinancialUpdate = async () => {
+        const bId = document.getElementById('modalBookingId').value;
+        const collected = parseFloat(document.getElementById('inputCollectAmount').value) || 0;
+        const payMethod = document.getElementById('selectPayMethod').value;
+        const receiverName = document.getElementById('inputReceiverName').value.trim();
+        const submitBtn = document.getElementById('btnSubmitFinancial');
+
+        if (!receiverName) {
+            alert("برجاء تسجيل اسم المشرف المستلم!");
+            return;
+        }
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "جاري الحفظ والتسكين الفوري...";
+
+            const bookingRef = doc(db, "bookings", bId);
+            const bookingSnap = await getDoc(bookingRef);
+
+            if (bookingSnap.exists()) {
+                const bookingData = bookingSnap.data();
+                
+                const oldDeposit = parseFloat(bookingData.deposit) || 0;
+                const newDeposit = oldDeposit + collected;
+
+                let updatedFields = { deposit: newDeposit };
+                if (bookingData.extraPaidStatus === "لا" && collected >= (bookingData.extraAmount || 0)) {
+                    updatedFields.extraPaidStatus = "نعم";
+                }
+
+                if (!bookingData.supervisionLogs) {
+                    bookingData.supervisionLogs = [];
+                }
+                bookingData.supervisionLogs.push({
+                    amountCollected: collected,
+                    paymentMethod: payMethod,
+                    fieldReceiver: receiverName,
+                    actionBySystemUser: currentSystemUser,
+                    timestamp: new Date().toISOString()
+                });
+                updatedFields.supervisionLogs = bookingData.supervisionLogs;
+
+                await updateDoc(bookingRef, updatedFields);
+
+                alert(`🎉 تم تأكيد التحصيل والتسكين المالي للوحدة بنجاح!`);
+            }
+
+            const modalEl = document.getElementById('actionModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            modalInstance.hide();
+            loadSupervisionData();
+
+        } catch (error) {
+            alert("فشل تحديث البيانات: " + error.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "تأكيد واستلام النقدية";
+        }
+    };
+
+    window.loadSupervisionData = loadSupervisionData;
+    window.onload = () => {
+        setDefaultDate();
+        loadSupervisionData();
+    };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حجوزاتي وعمولاتي | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg-light: #f4f7fc;
+            --card-white: #ffffff;
+            --glass-border: rgba(0, 74, 173, 0.08);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            
+            /* ألوان الهوية الفاتحة */
+            --primary: #004aad;
+            --primary-light: #edf4fe;
+            --success: #2ecc71;
+            --success-light: #e8fbf0;
+            --warning: #f39c12;
+            --warning-light: #fef5e7;
+        }
+
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--bg-light);
+            color: var(--text-main); 
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        /* بار العناوين والرجوع */
+        .page-header {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            padding: 18px 22px; 
+            border-radius: 20px;
+            margin-top: 20px; 
+            box-shadow: 0 10px 25px rgba(0, 74, 173, 0.03);
+        }
+
+        .btn-back {
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            background: #ffffff;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.25s ease;
+        }
+        .btn-back:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: rgba(0, 74, 173, 0.15);
+        }
+
+        /* تعديل كروت الإحصائيات وضبط المساحات للموبايل */
+        .commission-card {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            box-shadow: 0 8px 20px rgba(0, 74, 173, 0.02);
+            min-height: 95px; /* تثبيت طول متناسق */
+        }
+        .com-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+        .commission-card p {
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+        }
+        .commission-card h4 {
+            font-size: 1.15rem;
+            white-space: nowrap;
+        }
+
+        /* حاوية الجدول المعدلة */
+        .table-container {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 74, 173, 0.02);
+        }
+
+        /* تحسين التمرير للجدول لمنع تداخل النصوص */
+        .table-responsive-custom {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+        }
+
+        .table {
+            margin-bottom: 0;
+            vertical-align: middle;
+            min-width: 650px; /* يضمن مساحة كافية لكل الأعمدة ولا يضغط الكلام */
+        }
+        .table tragedies th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 2px solid #edf2f7;
+            padding: 14px 10px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .table tbody td {
+            padding: 16px 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-bottom: 1px solid #f1f5f9;
+            white-space: nowrap; /* يمنع نزول النص لسطر جديد وتداخله */
+        }
+
+        /* بادج حالة العمولات */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .status-paid {
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+        .status-pending {
+            background-color: var(--warning-light);
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h5 class="fw-black m-0" style="color: var(--primary);"><i class="fas fa-file-invoice-dollar me-1"></i> أرشيف الحجوزات والعمولات</h5>
+            <p class="text-muted small mb-0 mt-1">تتبع مستحقاتك المالية وحالة طلبات الصرف الحالية</p>
+        </div>
+        <a href="marketer_dashboard.html" class="btn btn-back btn-sm px-3 py-2">
+            <i class="fas fa-arrow-right me-1"></i> العودة للرئيسية
+        </a>
+    </div>
+
+    <div class="row g-2 mt-1">
+        <div class="col-12 col-md-4">
+            <div class="commission-card">
+                <div class="com-icon" style="background: var(--primary-light); color: var(--primary);">
+                    <i class="fas fa-suitcase"></i>
+                </div>
+                <div>
+                    <p class="text-muted small fw-bold">إجمالي حجوزاتك</p>
+                    <h4 class="fw-black m-0" id="totalBookingsCount" style="color: var(--primary);">0 حجز</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="commission-card">
+                <div class="com-icon" style="background: var(--success-light); color: var(--success);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div>
+                    <p class="text-muted small mb-1 fw-bold">عمولات تم صرفها</p>
+                    <h4 class="fw-black m-0" id="paidCommissions" style="color: var(--success);">0 ج.م</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="commission-card">
+                <div class="com-icon" style="background: var(--warning-light); color: var(--warning);">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div>
+                    <p class="text-muted small mb-1 fw-bold">عمولات معلقة</p>
+                    <h4 class="fw-black m-0" id="pendingCommissions" style="color: var(--warning);">0 ج.م</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="fw-bold m-0 text-dark"><i class="fas fa-list me-1 text-secondary"></i> تفاصيل العقود والنزلاء</h6>
+            <span class="badge bg-light text-secondary fw-bold" style="font-size: 0.7rem;">تحديث تلقائي نشط</span>
+        </div>
+        
+        <div class="table-responsive-custom">
+            <table class="table text-center align-middle">
+                <thead>
+                    <tr>
+                        <th class="text-start">اسم النزيل</th>
+                        <th>رقم الوحدة</th>
+                        <th>الفترة (من - إلى)</th>
+                        <th>مبلغ الحجز</th>
+                        <th>عمولتك</th>
+                        <th>حالة الصرف</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingsTableBody">
+                    <tr>
+                        <td colspan="6" class="text-muted py-4">
+                            <i class="fas fa-spinner fa-spin me-2"></i> جاري استدعاء حجوزاتك وتدقيق العمولات...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const localUserData = localStorage.getItem('loggedUser');
+    let currentUserEmail = null;
+    let currentUserRole = null;
+
+    if (localUserData) {
+        const parsedUser = JSON.parse(localUserData);
+        currentUserEmail = parsedUser.email;
+        currentUserRole = parsedUser.role;
+    }
+
+    if (!currentUserEmail || (currentUserRole !== 'مسوق' && currentUserRole !== 'ادارة')) {
+        alert("⚠️ حماية النظام: وصول غير مصرح به! يرجى تسجيل الدخول أولاً.");
+        window.location.href = "login.html";
+    } else {
+        loadMarketerBookingsAndCommissions();
+    }
+
+    function loadMarketerBookingsAndCommissions() {
+        const q = query(collection(db, "bookings"), where("marketerEmail", "==", currentUserEmail));
+
+        onSnapshot(q, (snapshot) => {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = "";
+
+            let count = 0;
+            let totalPaid = 0;
+            let totalPending = 0;
+
+            if (snapshot.empty) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-muted py-4">لم تقم بتسجيل أي حجوزات باسمك حتى الآن.</td></tr>`;
+                updateCounters(0, 0, 0);
+                return;
+            }
+
+            snapshot.forEach((docSnap) => {
+                const b = docSnap.data();
+                count++;
+
+                const commission = parseFloat(b.marketerCommissionAmount || 0);
+                const status = b.commissionStatus === "تم الصرف" || b.commissionStatus === "مدفوعة" ? "paid" : "pending";
+
+                if (status === "paid") {
+                    totalPaid += commission;
+                } else {
+                    totalPending += commission;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="text-start fw-bold text-dark"><i class="far fa-user me-2 text-primary small"></i> ${b.guestName || 'نزيل غير مسجل'}</td>
+                    <td><span class="badge bg-light text-dark px-2.5 py-1.5 border">${b.unitNumber || '---'}</span></td>
+                    <td class="small text-muted" dir="ltr">${b.checkInDate || '??'} / ${b.checkOutDate || '??'}</td>
+                    <td class="text-primary">${parseFloat(b.totalAmount || 0).toLocaleString()} ج.م</td>
+                    <td class="text-dark fw-bold">${commission.toLocaleString()} ج.م</td>
+                    <td>
+                        <span class="status-badge ${status === 'paid' ? 'status-paid' : 'status-pending'}">
+                            <i class="${status === 'paid' ? 'fas fa-check-double' : 'fas fa-clock'} me-1"></i>
+                            ${status === 'paid' ? 'تم الصرف' : 'معلقة بالخزينة'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateCounters(count, totalPaid, totalPending);
+        });
+    }
+
+    function updateCounters(count, paid, pending) {
+        document.getElementById('totalBookingsCount').innerText = `${count} حجز`;
+        document.getElementById('paidCommissions').innerText = `${paid.toLocaleString()} ج.م`;
+        document.getElementById('pendingCommissions').innerText = `${pending.toLocaleString()} ج.م`;
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

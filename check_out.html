@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة خروج وإخلاء الشاليهات | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #004aad; 
+            --gold: #c5a059; 
+            --bg-light: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #2d3436;
+            --danger-red: #e74c3c;
+        }
+        
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--bg-light); 
+            color: var(--text-dark); 
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        /* كروت التسكين والخروج الدائرية */
+        .super-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .super-card::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary);
+        }
+        /* تعديل مظهر الكارت عند تأكيد الخروج */
+        .super-card.checked-out::before {
+            background: var(--danger-red); 
+        }
+        .super-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+        }
+
+        .lux-badge { background: rgba(0, 74, 173, 0.08); color: var(--primary); font-weight: 800; padding: 5px 12px; border-radius: 12px; font-size: 0.75rem; }
+        .marketer-badge { background: rgba(197, 160, 89, 0.12); color: var(--gold); font-weight: 700; padding: 4px 10px; border-radius: 10px; font-size: 0.75rem; }
+        
+        /* شارات حالة المغادرة الملونة */
+        .status-badge-out { background: rgba(231, 76, 60, 0.15); color: var(--danger-red); font-weight: 800; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; }
+        .status-badge-stay { background: rgba(52, 152, 219, 0.15); color: #2980b9; font-weight: 800; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; }
+
+        /* الصندوق المالي المتناسق */
+        .finance-box {
+            background: #f1f2f6;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .finance-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid #e1e2e6; }
+        .finance-row:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .lux-input { 
+            background: #ffffff; 
+            border: 1px solid #e1e2e6; 
+            border-radius: 15px; 
+            padding: 12px 20px; 
+            color: var(--text-dark); 
+            font-weight: 700; 
+            font-size: 1rem;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .lux-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 74, 173, 0.1);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mb-5">
+    <!-- الهيدر الرئيسي للمغادرة -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 px-1">
+        <div>
+            <h4 class="fw-black text-dark m-0"><i class="fas fa-door-open text-danger me-1"></i> حركات مغادرة وإخلاء الوحدات (Check-out)</h4>
+            <p class="text-muted small m-0 mt-1">جرد ومعاينة الشاليهات بناءً على تاريخ المغادرة وتأكيد تسليم المفاتيح</p>
+        </div>
+        <a href="master_plan.html" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3"><i class="fas fa-th me-1"></i> المخطط الشهري</a>
+    </div>
+
+    <!-- الفلتر بالتاريخ الذكي لحصر المغادرين -->
+    <div class="card p-3 border-0 shadow-sm rounded-4 mb-4">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <label for="targetDatePicker" class="fw-bold text-dark m-0"><i class="far fa-calendar-alt text-danger me-1"></i> اختر تاريخ المغادرة المُراد عرضه:</label>
+            <input type="date" id="targetDatePicker" class="form-control lux-input" onchange="loadCheckOutData()">
+        </div>
+    </div>
+
+    <!-- حاوية كروت المغادرة النشطة -->
+    <div class="row g-4" id="cardsContainer">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-danger" role="status"></div>
+            <p class="text-muted mt-2">جاري فحص عقود المغادرة والتحقق من تسليم الغرف...</p>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // اسم مشرف النظام المسؤول عن التوثيق الحالي
+    const currentSystemUser = "علي عادل"; 
+
+    function setDefaultDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('targetDatePicker').value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    async function loadCheckOutData() {
+        const container = document.getElementById('cardsContainer');
+        const selectedDate = document.getElementById('targetDatePicker').value;
+
+        if (!selectedDate) {
+            container.innerHTML = `<div class="col-12 text-center text-muted py-4">برجاء تحديد التاريخ أولاً للمتابعة.</div>`;
+            return;
+        }
+
+        try {
+            const bookingsSnap = await getDocs(collection(db, "bookings"));
+            let htmlContent = "";
+            let hasCheckOuts = false;
+
+            bookingsSnap.forEach(bDoc => {
+                const booking = bDoc.data();
+                const dateRangeStr = booking.dates || "";
+                
+                let checkOutDate = "";
+                if (dateRangeStr.includes("إلى")) {
+                    checkOutDate = dateRangeStr.split("إلى")[1].trim();
+                }
+
+                // فلترة الحجوزات بناءً على تاريخ الخروج والمغادرة الفعلي (Check-out Date)
+                if (checkOutDate === selectedDate) {
+                    hasCheckOuts = true;
+
+                    const totalRent = parseFloat(booking.totalAmount) || 0;
+                    const deposit = parseFloat(booking.deposit) || 0;
+                    const extraAmount = parseFloat(booking.extraAmount) || 0;
+                    const extraPaid = booking.extraPaidStatus || "لا";
+                    
+                    let remaining = totalRent - deposit;
+                    if (extraPaid === "لا") { remaining += extraAmount; }
+
+                    // 💡 التحقق من حالة الخروج الموثقة في الداتابيز
+                    const isCheckedOut = booking.checkOutStatus === "تم الخروج";
+                    
+                    const statusBadge = isCheckedOut 
+                        ? `<span class="status-badge-out"><i class="fas fa-door-closed me-1"></i> تم تأكيد الخروج وإخلاء الغرف 🔴</span>` 
+                        : `<span class="status-badge-stay"><i class="fas fa-bed me-1"></i> قيد الإقامة (لم يغادر بعد) 🔵</span>`;
+
+                    htmlContent += `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="super-card p-3 ${isCheckedOut ? 'checked-out' : ''}">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="fw-bold text-dark m-0" style="font-size:1.15rem">${booking.clientName}</h5>
+                                        <span class="lux-badge">كود: ${booking.rentCode || 'N/A'}</span>
+                                    </div>
+                                    
+                                    <div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
+                                        <span class="marketer-badge"><i class="fas fa-user-tie me-1"></i> المسوق: ${booking.marketer || "عام"}</span>
+                                        <span class="badge bg-light text-dark border small fw-bold" style="border-radius:10px">${booking.village || 'شاليه'}</span>
+                                    </div>
+                                    
+                                    <div class="text-muted small mb-1"><i class="fas fa-phone-alt text-primary ms-1"></i> تليفون: <span class="fw-bold text-dark">${booking.clientPhone || 'غير مسجل'}</span></div>
+                                    <div class="text-muted small mb-1"><i class="far fa-calendar-alt text-gold ms-1"></i> فترة الإقامة: <b class="text-primary" dir="ltr">${dateRangeStr}</b></div>
+                                    
+                                    <!-- شارة حالة المغادرة المحدثة -->
+                                    <div class="my-3 text-center">
+                                        ${statusBadge}
+                                    </div>
+
+                                    <div class="finance-box shadow-sm">
+                                        <div class="finance-row text-muted"><span>الحساب المالي النهائي عند الخروج:</span><b class="${remaining <= 0 ? 'text-success' : 'text-danger'}">${remaining <= 0 ? 'خالص بالكامل ومسدد' : remaining + ' ج.م متبقي للتحصيل'}</b></div>
+                                        ${isCheckedOut && booking.checkOutTime ? `<div class="finance-row text-muted small"><span>وقت المغادرة الفعلي:</span><b class="text-dark">${booking.checkOutTime}</b></div>` : ''}
+                                        ${isCheckedOut && booking.checkOutSupervisor ? `<div class="finance-row text-muted small"><span>المشرف المستلم:</span><b class="text-dark">${booking.checkOutSupervisor}</b></div>` : ''}
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <button class="btn ${isCheckedOut ? 'btn-secondary' : 'btn-danger'} w-100 fw-bold py-2" style="border-radius:12px;" 
+                                        ${isCheckedOut ? 'disabled' : ''}
+                                        onclick="confirmCheckOut('${bDoc.id}', '${booking.clientName}', ${remaining})">
+                                        <i class="fas ${isCheckedOut ? 'fa-check-circle' : 'fa-sign-out-alt'} me-1"></i> 
+                                        ${isCheckedOut ? 'تمت مغادرة العميل بالكامل' : 'تأكيد المغادرة وتسليم الشاليه'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            if (!hasCheckOuts) {
+                container.innerHTML = `<div class="col-12 text-center text-muted py-5"><i class="fas fa-door-open fa-2x mb-2 d-block text-gold"></i>لا توجد حجوزات مغادرة مجدولة لهذا التاريخ اليوم.</div>`;
+            } else {
+                container.innerHTML = htmlContent;
+            }
+
+        } catch (error) {
+            container.innerHTML = `<div class="col-12 text-center text-danger py-4">❌ خطأ فني أثناء تحميل البيانات: ${error.message}</div>`;
+        }
+    }
+
+    // حركة تأكيد الخروج الفوري وتحديث الحالات على السيستم
+    window.confirmCheckOut = async (bookingId, clientName, remainingAmount) => {
+        // حماية أمنية: تذكير المشرف لو العميل لسه عليه مبالغ مالية قبل ما يخرج
+        if (remainingAmount > 0) {
+            const process = confirm(`⚠️ تنبيه مالي مهم:\nالعميل "${clientName}" متبقي عليه مبلغ مالي غير مسدد بقيمة (${remainingAmount} ج.م).\nهل أنت متأكد من المتابعة والسماح له بالخروج الفعلي؟`);
+            if (!process) return;
+        } else {
+            if (!confirm(`هل أنت متأكد من تسجيل خروج وإخلاء طرف المستأجر "${clientName}" واستلام المفاتيح؟`)) return;
+        }
+
+        try {
+            const bookingRef = doc(db, "bookings", bookingId);
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) + ' - ' + now.toLocaleDateString('ar-EG');
+
+            // تحديث حالة الخروج، الوقت، واسم المشرف المسؤول
+            await updateDoc(bookingRef, {
+                checkOutStatus: "تم الخروج",
+                checkOutTime: timeString,
+                checkOutSupervisor: currentSystemUser
+            });
+
+            alert(`🔴 تم إخلاء الشاليه بنجاح وتأكيد خروج العميل: ${clientName}`);
+            loadCheckOutData(); // تحديث فوري للشاشة
+
+        } catch (error) {
+            alert("حدث خطأ أثناء حفظ حركة الخروج: " + error.message);
+        }
+    };
+
+    window.loadCheckOutData = loadCheckOutData;
+    window.onload = () => {
+        setDefaultDate();
+        loadCheckOutData();
+    };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخطط الحجوزات الشهري الماستر | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #004aad; 
+            --gold: #c5a059; 
+            --dark-bg: #f8f9fa; /* أرضية النظام الفاتحة */
+            --card-bg: #ffffff; /* كارت أبيض ناصع */
+            --input-bg: #ffffff; /* حقول إدخال بيضاء */
+            --booked-gradient: linear-gradient(135deg, #fff5f5, #ffe3e3); /* لون حجوزات هادئ ومريح للعين */
+            --booked-text: #e74c3c; /* لون نص الحجوزات */
+            --vacant-hover: rgba(46, 204, 113, 0.1);
+        }
+        
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--dark-bg); 
+            color: #2d3436; /* نص رئيسي داكن */
+            padding: 15px 0;
+        }
+        
+        .main-card { 
+            background: var(--card-bg); 
+            border-radius: 15px; 
+            border: 1px solid #e1e2e6; /* حدود رمادية خفيفة للفاتح */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            width: 100%;
+        }
+
+        .grid-container { 
+            overflow-x: auto; 
+            width: 100%; 
+            border-radius: 10px; 
+            border: 1px solid #e1e2e6; 
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .master-table { 
+            margin-bottom: 0; 
+            border-collapse: separate; 
+            border-spacing: 0; 
+            width: max-content; 
+            min-width: 100%;
+        }
+        
+        .master-table th:first-child, .master-table td:first-child {
+            position: sticky; 
+            right: 0; 
+            background: #ffffff !important; /* تثبيت العمود الأول بخلفية بيضاء */
+            z-index: 5;
+            font-weight: 900; 
+            color: #2d3436; 
+            width: 160px;
+            min-width: 160px;
+            max-width: 160px;
+            border-left: 3px solid var(--primary);
+            box-shadow: -5px 0 10px rgba(0,0,0,0.03);
+            white-space: nowrap;
+        }
+        
+        .master-table th { 
+            background: #f1f2f6; /* ترويسة الجدول رمادي فاتح */
+            color: #57606f; 
+            font-weight: 700; 
+            padding: 10px 2px; 
+            font-size: 0.8rem; 
+            border: 1px solid #e1e2e6; 
+            text-align: center; 
+            width: 55px;
+            min-width: 55px;
+            max-width: 55px;
+        }
+        .master-table th.today-column { background: var(--primary) !important; color: white !important; }
+        
+        .master-table td { 
+            padding: 0; 
+            border: 1px solid #f1f2f6; 
+            text-align: center; 
+            height: 65px; 
+            vertical-align: middle; 
+            background: #ffffff; 
+            width: 55px;
+            min-width: 55px;
+            max-width: 55px;
+        }
+        
+        .cell-booked {
+            background: var(--booked-gradient); 
+            color: var(--booked-text); /* تطبيق لون النص الداكن للحجز الفاتح */
+            font-weight: 700; 
+            font-size: 0.7rem; 
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2px;
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            border: none;
+        }
+        .cell-booked:hover { background: #fee2e2; }
+        
+        .cell-vacant-btn {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: #ced6e0; /* لون الأيقونة الفاضية في المود الفاتح */
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cell-vacant-btn:hover {
+            background: var(--vacant-hover);
+            color: #2ecc71;
+        }
+
+        .lux-input { 
+            background: var(--input-bg); 
+            border: 1px solid #e1e2e6; 
+            border-radius: 12px; 
+            padding: 10px 15px; 
+            color: #2d3436; 
+            font-weight: 600; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid px-2 mb-5">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 px-1">
+        <div>
+            <h5 class="fw-bold text-dark m-0"><i class="fas fa-calendar-alt text-gold me-1"></i> لوحة الإشغال والحجوزات الشاملة</h5>
+        </div>
+        <div class="d-flex gap-1 align-items-center">
+            <select id="filterYear" class="lux-input py-1 px-2 text-center" onchange="loadMasterPlan()"></select>
+            <select id="filterMonth" class="lux-input py-1 px-2 text-center" onchange="loadMasterPlan()">
+                <option value="0">يناير (01)</option><option value="1">فبراير (02)</option><option value="2">مارس (03)</option><option value="3">أبريل (04)</option><option value="4">مايو (05)</option><option value="5">يونيو (06)</option><option value="6">يوليو (07)</option><option value="7">أغسطس (08)</option><option value="8">سبتمبر (09)</option><option value="9">أكتوبر (10)</option><option value="10">نوفمبر (11)</option><option value="11">ديسمبر (12)</option>
+            </select>
+            <a href="index.html" class="btn btn-sm btn-outline-dark fw-bold px-2 py-2"><i class="fas fa-home"></i></a>
+        </div>
+    </div>
+
+    <div class="main-card p-1">
+        <div class="grid-container">
+            <table class="table master-table text-center align-middle">
+                <thead id="gridHeader"></thead>
+                <tbody id="gridBody">
+                    <tr><td colspan="32" class="text-muted py-5">جاري جرد الحجوزات وتنسيق اللوحة الماستر...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+
+    const yearSelect = document.getElementById('filterYear');
+    for(let y = currentYear - 1; y <= currentYear + 2; y++) {
+        let opt = document.createElement('option'); opt.value = y; opt.innerText = y;
+        if(y === currentYear) opt.selected = true;
+        yearSelect.appendChild(opt);
+    }
+    document.getElementById('filterMonth').value = currentMonth;
+
+    // دالة تحويل التاريخ لنص لمطابقتها بدقة
+    function formatDateToStr(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    // دالة تفكيك مصفوفة الحجوزات القادمة من الـ Firebase بنفس منطق الـ Details الفعلي
+    function parseRanges(bookedDates) {
+        let parsed = [];
+        if (!bookedDates || !Array.isArray(bookedDates)) return parsed;
+        bookedDates.forEach(range => {
+            let startStr = ""; let endStr = "";
+            if (typeof range === 'string') {
+                const parts = range.split(/ to | - | إلى /);
+                if (parts.length === 2) { startStr = parts[0].trim(); endStr = parts[1].trim(); }
+            } else if (range.start && range.end) {
+                startStr = range.start; endStr = range.end;
+            }
+            if (startStr && endStr) parsed.push({ start: startStr, end: endStr });
+        });
+        return parsed;
+    }
+
+    async function loadMasterPlan() {
+        const year = parseInt(document.getElementById('filterYear').value);
+        const month = parseInt(document.getElementById('filterMonth').value);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const headerRow = document.getElementById('gridHeader');
+        let headerHtml = `<tr><th>اسم الوحدة</th>`;
+        for (let d = 1; d <= daysInMonth; d++) {
+            const isToday = (today.getDate() === d && today.getMonth() === month && today.getFullYear() === year);
+            headerHtml += `<th class="${isToday ? 'today-column' : ''}">${d}<br><span style="font-size:0.55rem; opacity:0.5;">يوم</span></th>`;
+        }
+        headerHtml += `</tr>`;
+        headerRow.innerHTML = headerHtml;
+
+        try {
+            // جلب الوحدات (والتي تحتوي على مصفوفة الحجوزات bookedDates)
+            const unitsSnap = await getDocs(collection(db, "units"));
+            let unitsList = [];
+            unitsSnap.forEach(doc => {
+                const u = doc.data();
+                unitsList.push({ 
+                    id: doc.id, 
+                    unitName: u.chaletName || `شاليه ${u.subUnitNumber}` || "بدون اسم", 
+                    rentCode: u.rentCode || u.subUnitNumber || "",
+                    bookedDates: u.bookedDates || [] // جلب المصفوفة هنا للـ Grid
+                });
+            });
+
+            const tbody = document.getElementById('gridBody');
+            tbody.innerHTML = "";
+
+            // توزيع الداتا على الـ Grid بدقة يوم بيوم
+            unitsList.forEach(unit => {
+                let rowHtml = `<tr>
+                    <td class="text-start ps-2 fw-bold" style="font-size:0.75rem;">
+                        <div class="text-truncate" style="max-width: 150px;">${unit.unitName}</div>
+                        <span class="badge bg-primary" style="font-size:0.55rem; padding:2px 4px;">${unit.rentCode}</span>
+                    </td>`;
+                
+                // تفكيك الحجوزات الخاصة بالشاليه ده لمصفوفة فترات واضحة
+                const ranges = parseRanges(unit.bookedDates);
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const loopDate = new Date(year, month, d);
+                    loopDate.setHours(0,0,0,0);
+                    const loopDateStr = formatDateToStr(loopDate);
+
+                    // فحص إذا كان اليوم الحالي يقع ضمن أي فترة حجز للشاليه
+                    const isBooked = ranges.some(r => {
+                        const start = new Date(r.start); start.setHours(0,0,0,0);
+                        const end = new Date(r.end); end.setHours(0,0,0,0);
+                        // اليوم يقع بين تاريخ البداية والنهاية (ليالي مبيت مبيوعة)
+                        return (loopDate >= start && loopDate < end);
+                    });
+
+                    if (isBooked) {
+                        // 🔴 اليوم محجوز فعلياً للشاليه
+                        rowHtml += `<td>
+                            <button class="cell-booked" onclick="goToDetails('${unit.id}')" title="شاليه محجوز - اضغط لمعاينة التفاصيل">
+                                <span>محجوز</span>
+                            </button>
+                        </td>`;
+                    } else {
+                        // 🟢 اليوم متاح وفاضي
+                        rowHtml += `<td>
+                            <button class="cell-vacant-btn" onclick="goToDetails('${unit.id}')" title="متاح - اضغط للحجز الفوري">
+                                <i class="fas fa-plus-circle"></i>
+                            </button>
+                        </td>`;
+                    }
+                }
+                
+                rowHtml += `</tr>`;
+                tbody.innerHTML += rowHtml;
+            });
+
+        } catch (err) {
+            document.getElementById('gridBody').innerHTML = `<tr><td colspan="32" class="text-danger small py-4">❌ خطأ: ${err.message}</td></tr>`;
+        }
+    }
+
+    window.goToDetails = (id) => { 
+        window.location.href = `details.html?id=${id}`; 
+    };
+
+    window.loadMasterPlan = loadMasterPlan;
+    window.onload = loadMasterPlan;
+</script>
+</body>
+</html>

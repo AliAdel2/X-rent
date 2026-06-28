@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأسيس أصل عقاري </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #3498db; --gold: #f1c40f; --dark-bg: #0a0f18; --card-bg: #161e2d; --input-bg: #1e293b; }
+        body { font-family: 'Cairo', sans-serif; background: var(--dark-bg); color: #e2e8f0; padding: 50px 0; }
+
+        .setup-container { max-width: 1000px; margin: auto; }
+        
+        /* الكارت الرئيسي */
+        .main-card { 
+            background: var(--card-bg); border-radius: 35px; border: 1px solid rgba(255,255,255,0.05); 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); overflow: hidden;
+        }
+
+        .card-header-lux {
+            background: linear-gradient(135deg, #1e40af ,#161e5d);
+            padding: 40px; text-align: center; border-bottom: 2px solid var(--gold);
+        }
+
+        /* عناوين الأقسام */
+        .section-title { 
+            font-weight: 900; color: var(--gold); display: flex; align-items: center; gap: 12px; 
+            margin: 40px 0 20px; font-size: 1.1rem; border-right: 4px solid var(--gold); padding-right: 15px;
+        }
+
+        /* الحقول */
+        .custom-field { margin-bottom: 20px; }
+        .custom-field label { display: block; margin-bottom: 8px; font-weight: 700; color: #94a3b8; font-size: 0.85rem; }
+        .lux-input { 
+            width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 15px; padding: 14px; color: white; transition: 0.3s; font-weight: 600;
+        }
+        .lux-input:focus { border-color: var(--gold); outline: none; background: #243049; box-shadow: 0 0 15px rgba(197, 160, 89, 0.1); }
+
+        /* ستايل مخصص لمربعات الـ Checkbox الخاصة بالإطلالات */
+        .view-checkbox-group {
+            background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 15px; padding: 15px; display: flex; flex-wrap: wrap; gap: 20px;
+        }
+        .form-check-input:checked { background-color: var(--gold); border-color: var(--gold); }
+        .form-check-label { font-weight: 600; color: #e2e8f0; cursor: pointer; }
+
+        /* معرض الصور وميديا المعاينة */
+        .image-manager { 
+            background: rgba(255,255,255,0.02); border-radius: 25px; padding: 25px; 
+            border: 2px dashed rgba(197, 160, 89, 0.2); 
+        }
+        .btn-add-photo { 
+            background: transparent; border: 1px solid var(--gold); color: var(--gold); 
+            border-radius: 12px; padding: 8px 20px; transition: 0.3s; font-size: 0.85rem; font-weight: 700;
+        }
+        .btn-add-photo:hover { background: var(--gold); color: #000; }
+
+        .btn-save { 
+            background: var(--gold); color: #000; font-weight: 900; padding: 20px; 
+            border-radius: 20px; width: 100%; border: none; font-size: 1.25rem; 
+            margin-top: 40px; transition: 0.4s; box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2);
+        }
+        .btn-save:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(197, 160, 89, 0.3); }
+
+        .edit-mode-btn { background: #0ea5e9 !important; }
+    </style>
+</head>
+<body>
+
+<div class="container setup-container">
+    <div class="main-card">
+        <div class="card-header-lux" id="headerBox">
+            <h2 class="fw-900 text-white mb-1" id="mainHeader">تأسيس وحدة جديدة <span style="color:var(--gold)">.</span></h2>
+            <p class="opacity-50 small mb-0">نظام إدارة الأصول المطور -  X-rent v2.0</p>
+        </div>
+
+        <form id="addUnitForm" class="p-4 p-md-5">
+            <div class="section-title"><i class="fas fa-id-card"></i> الربط والملكية</div>
+            <div class="row">
+                <div class="col-md-4 custom-field"><label>اسم المالك</label><input type="text" id="ownerName" class="lux-input" required></div>
+                <div class="col-md-4 custom-field"><label>بريد المالك (للربط)</label><input type="email" id="ownerEmail" class="lux-input" required></div>
+                <div class="col-md-4 custom-field"><label>اسم الشاليه الترويجي (يظهر للمسوقين)</label><input type="text" id="chaletName" class="lux-input" placeholder="مثال: شاليه فيو بحر صف أول" required></div>
+                <div class="col-md-4 custom-field"><label>كود الحجز الموحد (Rent Code)</label><input type="text" id="rentCode" class="lux-input" required></div>
+            </div>
+
+            <div class="section-title"><i class="fas fa-map-marked-alt"></i> المواصفات الجغرافية والفنية</div>
+            <div class="row">
+                <div class="col-md-4 custom-field">
+                    <label>اسم القرية</label>
+                    <select id="village" class="lux-input">
+                        <option>فارما بيتش ريزورت</option><option>مارينا دلتا</option>
+                        <option>بلوبيتش</option><option>مارينا دلتا لاجونز</option>
+                    </select>
+                </div>
+                <div class="col-md-4 custom-field">
+                    <label>المجموعة (Zone)</label>
+                    <select id="group" class="lux-input">
+                        <script>for(let i=1; i<=14; i++) document.write(`<option>${i}</option>`)</script>
+                    </select>
+                </div>
+                <div class="col-md-4 custom-field">
+                    <label>رقم الشاليه (داخلي)</label>
+                    <input type="text" id="subUnitNumber" class="lux-input" required>
+                </div>
+                <div class="col-md-4 custom-field">
+                    <label>الدور</label>
+                    <select id="floor" class="lux-input"><option>الأرضي</option><option>الأول</option><option>الثاني</option></select>
+                </div>
+                <div class="col-md-4 custom-field">
+                    <label>رقم الوحدة</label>
+                    <select id="unitSelect" class="lux-input">
+                        <script>for(let i=1; i<=13; i++) document.write(`<option>${i}</option>`)</script>
+                    </select>
+                </div>
+                <div class="col-md-4 custom-field">
+                    <label>المساحة (متر²)</label>
+                    <select id="area" class="lux-input">
+                        <script>[63,70,75,77,84,86,92,97.5,100,107,111,131,135,140,150,192,195].forEach(a => document.write(`<option>${a}</option>`))</script>
+                    </select>
+                </div>
+                <div class="col-md-4 custom-field"><label>عدد الغرف</label><input type="number" id="rooms" class="lux-input" required></div>
+                <div class="col-md-4 custom-field"><label>عدد الحمامات</label><input type="number" id="bathrooms" class="lux-input" required></div>
+                <div class="col-md-4 custom-field"><label>عدد التكييفات</label><input type="number" id="acCount" class="lux-input" required></div>
+                
+                <div class="col-md-12 custom-field">
+                    <label>الإطلالات المتعددة (View)</label>
+                    <div class="view-checkbox-group" id="viewsContainer">
+                        <div class="form-check">
+                            <input class="form-check-input view-checkbox" type="checkbox" value="البحر مباشرة" id="viewSea">
+                            <label class="form-check-label" for="viewSea">البحر مباشرة</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input view-checkbox" type="checkbox" value="حمام سباحة" id="viewPool">
+                            <label class="form-check-label" for="viewPool">حمام سباحة</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input view-checkbox" type="checkbox" value="حديقة (لاند سكيب)" id="viewGarden">
+                            <label class="form-check-label" for="viewGarden">حديقة (لاند سكيب)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input view-checkbox" type="checkbox" value="تطل على الشارع الرئيسي" id="viewStreet">
+                            <label class="form-check-label" for="viewStreet">تطل على الشارع الرئيسي</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="fas fa-coins"></i> التشغيل والسياسة المالية</div>
+            <div class="row">
+                <div class="col-md-3 custom-field"><label>نوع التعاقد</label><select id="unitType" class="lux-input"><option>نسبة</option><option>سيزون</option></select></div>
+                
+                <div class="col-md-3 custom-field">
+                    <label>فئة تصنيف الشاليه (لتغيير السعر المجمع)</label>
+                    <select id="chaletClass" class="lux-input">
+                        <option value="VIP">ملكي / VIP (مميز جداً)</option>
+                        <option value="Medium">وسط / Medium (متوسط العرض)</option>
+                        <option value="Standard">اقتصادي / Standard (عادي)</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 custom-field"><label>أقصى عدد أفراد</label><input type="number" id="maxGuests" class="lux-input"></div>
+                <div class="col-md-3 custom-field"><label>سعر الليلة الحالى</label><input type="number" id="price" class="lux-input"></div>
+                <div class="col-md-3 custom-field"><label>عمولة الشركة (%)</label><input type="number" id="companyRatio" class="lux-input"></div>
+            </div>
+
+            <div class="custom-field">
+                <label>وصف ترويجي ومميزات إضافية</label>
+                <textarea id="description" class="lux-input" rows="3" placeholder="اكتب وصفاً جذاباً للوحدة..."></textarea>
+            </div>
+
+            <div class="section-title"><i class="fas fa-camera-retro"></i> ميديا المعاينة والمعرض التفاعلي</div>
+            <div class="image-manager">
+                <div class="custom-field">
+                    <label>رابط الصورة الرئيسية (الغلاف)</label>
+                    <input type="url" id="mainImage" class="lux-input" placeholder="https://image-link.com/main.jpg">
+                </div>
+                <div class="custom-field">
+                    <label>رابط فيديو المعاينة (يوتيوب Embed أو رابط مباشر)</label>
+                    <input type="url" id="videoUrl" class="lux-input" placeholder="https://www.youtube.com/embed/xxxxxx">
+                </div>
+                <label class="small fw-bold text-muted mb-2">ألبوم الصور الإضافية المتكاملة للشاليه</label>
+                <div id="extraPhotos"></div>
+                <div class="text-center mt-3">
+                    <button type="button" class="btn-add-photo" id="addPhotoBtn">+ إضافة رابط صورة إضافي</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-save" id="saveBtn">اعتماد وحفظ الأصل العقاري</button>
+        </form>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get('editId');
+
+    if (editId) {
+        document.getElementById('mainHeader').innerHTML = `تعديل الأصل العقاري <span style="color:#0ea5e9">.</span>`;
+        document.getElementById('saveBtn').innerText = "تحديث البيانات الآن";
+        document.getElementById('saveBtn').classList.add('edit-mode-btn');
+        loadUnitData(editId);
+    }
+
+    async function loadUnitData(id) {
+        const docSnap = await getDoc(doc(db, "units", id));
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            
+            // حقن البيانات العادية
+            Object.keys(data).forEach(key => {
+                const el = document.getElementById(key);
+                if(el && key !== 'images' && key !== 'view') el.value = data[key];
+            });
+
+            // حقن مربعات اختيار الإطلالة المتعددة (لو كانت مسجلة كمصفوفة)
+            if (data.view && Array.isArray(data.view)) {
+                document.querySelectorAll('.view-checkbox').forEach(cb => {
+                    if (data.view.includes(cb.value)) cb.checked = true;
+                });
+            } else if (data.view) { // لو كانت نص قديم
+                document.querySelectorAll('.view-checkbox').forEach(cb => {
+                    if (cb.value === data.view) cb.checked = true;
+                });
+            }
+
+            if(data.images) data.images.forEach(url => createPhotoInput(url));
+        }
+    }
+
+    function createPhotoInput(val = "") {
+        const div = document.createElement('div');
+        div.className = "mt-2 d-flex gap-2";
+        div.innerHTML = `<input type="url" class="lux-input extra-url" value="${val}" placeholder="رابط صورة إضافي">
+                         <button type="button" class="btn btn-outline-danger btn-sm rounded-3" onclick="this.parentElement.remove()">×</button>`;
+        document.getElementById('extraPhotos').appendChild(div);
+    }
+
+    document.getElementById('addPhotoBtn').onclick = () => createPhotoInput();
+
+    document.getElementById('addUnitForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true;
+        btn.innerText = "جاري الحفظ...";
+
+        const extras = Array.from(document.querySelectorAll('.extra-url')).map(i => i.value).filter(v => v);
+        
+        // تجميع قيم الإطلالات المختارة في مصفوفة واحدة
+        const selectedViews = Array.from(document.querySelectorAll('.view-checkbox:checked')).map(cb => cb.value);
+
+        const unitObject = {
+            ownerName: document.getElementById('ownerName').value,
+            ownerEmail: document.getElementById('ownerEmail').value,
+            chaletName: document.getElementById('chaletName').value,
+            rentCode: document.getElementById('rentCode').value,
+            village: document.getElementById('village').value,
+            group: document.getElementById('group').value,
+            subUnitNumber: document.getElementById('subUnitNumber').value,
+            floor: document.getElementById('floor').value,
+            unitSelect: document.getElementById('unitSelect').value,
+            area: document.getElementById('area').value,
+            rooms: document.getElementById('rooms').value,
+            bathrooms: document.getElementById('bathrooms').value,
+            acCount: document.getElementById('acCount').value,
+            view: selectedViews, // حفظ الإطلالات كمصفوفة في قاعدة البيانات
+            unitType: document.getElementById('unitType').value,
+            chaletClass: document.getElementById('chaletClass').value, // حفظ الفئة الجديدة
+            maxGuests: document.getElementById('maxGuests').value,
+            price: document.getElementById('price').value,
+            companyRatio: document.getElementById('companyRatio').value,
+            description: document.getElementById('description').value,
+            mainImage: document.getElementById('mainImage').value,
+            videoUrl: document.getElementById('videoUrl').value,
+            images: extras,
+            updatedAt: serverTimestamp()
+        };
+
+        try {
+            if (editId) {
+                await updateDoc(doc(db, "units", editId), unitObject);
+                alert("✅ تم تحديث الوحدة بنجاح");
+            } else {
+                unitObject.createdAt = serverTimestamp();
+                unitObject.status = 'available';
+                unitObject.bookedDates = [];
+                await addDoc(collection(db, "units"), unitObject);
+                alert("✅ تم تأسيس الوحدة بنجاح");
+            }
+            window.location.href = "admin_manage.html";
+        } catch (err) { alert("❌ خطأ: " + err.message); btn.disabled = false; }
+    };
+</script>
+
+</body>
+</html>

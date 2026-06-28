@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المشرفين الميدانية | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #004aad; 
+            --gold: #c5a059; 
+            --bg-light: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-dark: #2d3436;
+            --danger-red: #e74c3c;
+            --success-green: #2ecc71;
+        }
+        
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--bg-light); 
+            color: var(--text-dark); 
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary), #002f75);
+            color: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0,74,173,0.15);
+        }
+
+        /* كروت الإحصائيات المربعة المزدوجة */
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: none;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 140px;
+        }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card .stat-value { font-size: 1.4rem; font-weight: 900; margin-top: 5px; }
+        .stat-card .stat-label { font-size: 0.85rem; color: #7f8c8d; font-weight: 700; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 5px; }
+
+        /* تلوين أيقونات الإحصائيات */
+        .bg-icon-collected { background: rgba(46, 204, 113, 0.12); color: var(--success-green); }
+        .bg-icon-remaining { background: rgba(231, 76, 60, 0.12); color: var(--danger-red); }
+        .bg-icon-checkin { background: rgba(0, 74, 173, 0.12); color: var(--primary); }
+        .bg-icon-checkout { background: rgba(197, 160, 89, 0.12); color: var(--gold); }
+
+        /* أزرار الإجراءات السريعة الفخمة */
+        .action-card-btn {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 2px solid transparent;
+            padding: 20px;
+            width: 100%;
+            text-align: right;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+        .action-card-btn:hover {
+            border-color: var(--primary);
+            background: #fafbfc;
+            transform: scale(1.01);
+        }
+        .action-card-btn .action-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        .action-card-btn .action-title { font-weight: 800; font-size: 1.1rem; color: var(--text-dark); margin: 0; }
+        .action-card-btn .action-desc { font-size: 0.78rem; color: #7f8c8d; margin: 2px 0 0 0; }
+
+        .lux-input { 
+            background: #ffffff; 
+            border: 1px solid #e1e2e6; 
+            border-radius: 15px; 
+            padding: 10px 20px; 
+            color: var(--text-dark); 
+            font-weight: 700;
+        }
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+        .btn-logout:hover {
+            background: var(--danger-red);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="dashboard-header mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h3 class="fw-black m-0"><i class="fas fa-cubes me-1"></i> بوابة الإشراف والمتابعة الميدانية</h3>
+            <p class="m-0 mt-2 opacity-75 small" id="welcomeUserText">مرحباً بك، كابتن .. جاري تحميل حركاتك المالية واللوجستية لليوم</p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="bg-white bg-opacity-20 p-2 rounded-4 d-flex align-items-center gap-2">
+                <span class="small fw-bold text-white ps-1"><i class="far fa-calendar-alt"></i> تصفية:</span>
+                <input type="date" id="dashboardDatePicker" class="form-control lux-input border-0 py-1 px-3" onchange="calculateDashboardStats()">
+            </div>
+            <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt ms-1"></i> خروج</button>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-icon-collected"><i class="fas fa-wallet"></i></div>
+                <div class="stat-label">المحصل اليوم</div>
+                <div class="stat-value text-success" id="statCollected">0 <span class="small" style="font-size:0.7rem">ج.م</span></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-icon-remaining"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="stat-label">المتبقي للتسليم</div>
+                <div class="stat-value text-danger" id="statRemaining">0 <span class="small" style="font-size:0.7rem">ج.م</span></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-icon-checkin"><i class="fas fa-sign-in-alt"></i></div>
+                <div class="stat-label">حركات الدخول</div>
+                <div class="stat-value text-primary" id="statCheckInCount">0</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-icon-checkout"><i class="fas fa-sign-out-alt"></i></div>
+                <div class="stat-label">حركات الخروج</div>
+                <div class="stat-value text-warning" id="statCheckOutCount">0</div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="fw-bold mb-3 px-1 text-dark"><i class="fas fa-rocket text-primary me-1"></i> الإجراءات والصفحات الميدانية السريعة</h5>
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <button class="action-card-btn" onclick="navigateTo('check_in.html')">
+                <div class="action-icon bg-primary text-white"><i class="fas fa-key"></i></div>
+                <div>
+                    <h6 class="action-title">بوابة الدخول والتسكين (Check-in)</h6>
+                    <p class="action-desc">تسجيل وصول النزلاء، تحصيل الدفعات، وتفعيل المفاتيح والكروت الكودية.</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <button class="action-card-btn" onclick="navigateTo('check_out.html')">
+                <div class="action-icon bg-danger text-white"><i class="fas fa-door-open"></i></div>
+                <div>
+                    <h6 class="action-title">بوابة الخروج والإخلاء (Check-out)</h6>
+                    <p class="action-desc">معاينة الشاليهات، استلام الأجهزة، وتأكيد مغادرة النزيل النهائية.</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <button class="action-card-btn" onclick="navigateTo('extra_collections.html')">
+                <div class="action-icon bg-warning text-dark"><i class="fas fa-hammer"></i></div>
+                <div>
+                    <h6 class="action-title">إيصال تحصيل نثريات وتلفيات</h6>
+                    <p class="action-desc">تحصيل مبالغ خارج العقد (كسر زجاج، تلفيات أدوات، خدمات إضافية، رسوم تأخير).</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <button class="action-card-btn" onclick="navigateTo('owner_expenses.html')">
+                <div class="action-icon bg-info text-white"><i class="fas fa-bolt"></i></div>
+                <div>
+                    <h6 class="action-title">مصروفات وصيانة الشاليهات (على المالك)</h6>
+                    <p class="action-desc">تسجيل شحن كروت الكهرباء، تغيير الأنابيب، وأعمال السباكة للمقاصة مع المالك.</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <button class="action-card-btn" onclick="navigateTo('general_expenses.html')">
+                <div class="action-icon bg-secondary text-white"><i class="fas fa-soap"></i></div>
+                <div>
+                    <h6 class="action-title">المصروفات النثرية العامة للشركة</h6>
+                    <p class="action-desc">تسجيل مشتريات المنظفات، أدوات النظافة، مطبوعات، وباقي مصاريف مكتب الإدارة.</p>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ⚡ التعديل الذهبي: سحب اسم الموظف والتأكد من هويته صلاحيته
+    const currentSystemUser = localStorage.getItem('userName');
+    const currentUserRole = localStorage.getItem('userRole');
+
+    function checkAuthProtection() {
+        // لو مفيش مستخدم مسجل أو الصلاحية مش "مشرف" ولا "ادارة" تمنعه فوراً من الدخول
+        if (!currentSystemUser || (currentUserRole !== 'مشرف' && currentUserRole !== 'ادارة')) {
+            alert("⚠️ خطأ أمني: يرجى تسجيل الدخول أولاً للوصول للوحة المشرفين!");
+            window.location.href = "index.html";
+            return false;
+        }
+        // عرض اسم الشخص المسجل تلقائياً
+        document.getElementById('welcomeUserText').innerHTML = `<i class="fas fa-user-circle text-gold me-1"></i> مرحباً بك، كابتن <span class="fw-black text-warning">${currentSystemUser}</span> .. إليك تحديثات الحركات المالية واللوجستية لليوم`;
+        return true;
+    }
+
+    // تعيين تاريخ اليوم كافتراضي في الخانة
+    function setDefaultDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('dashboardDatePicker').value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    // 📊 حساب الإحصائيات الأربعة دايناميكياً من قاعدة البيانات بناءً على التاريخ
+    async function calculateDashboardStats() {
+        const selectedDate = document.getElementById('dashboardDatePicker').value;
+        if (!selectedDate) return;
+
+        try {
+            const bookingsSnap = await getDocs(collection(db, "bookings"));
+            
+            let totalCollectedToday = 0;
+            let totalRemainingToday = 0;
+            let checkInCount = 0;
+            let checkOutCount = 0;
+
+            bookingsSnap.forEach(bDoc => {
+                const booking = bDoc.data();
+                const dateRangeStr = booking.dates || "";
+                
+                let checkInDate = "";
+                let checkOutDate = "";
+                
+                if (dateRangeStr.includes("إلى")) {
+                    const parts = dateRangeStr.split("إلى");
+                    checkInDate = parts[0].trim();
+                    checkOutDate = parts[1].trim();
+                }
+
+                const totalAmount = parseFloat(booking.totalAmount) || 0;
+                const deposit = parseFloat(booking.deposit) || 0;
+                const extraAmount = parseFloat(booking.extraAmount) || 0;
+                const extraPaid = booking.extraPaidStatus || "لا";
+
+                let currentRemaining = totalAmount - deposit;
+                if (extraPaid === "لا") { currentRemaining += extraAmount; }
+
+                // 1. حساب إحصائيات الدخول (إذا كان الحجز يبدأ اليوم المختار)
+                if (checkInDate === selectedDate) {
+                    checkInCount++;
+                    totalRemainingToday += currentRemaining;
+                }
+
+                // 2. حساب إحصائيات الخروج (إذا كان الحجز ينتهي اليوم المختار)
+                if (checkOutDate === selectedDate) {
+                    checkOutCount++;
+                }
+
+                // 3. حساب الكاش الفعلي المحصل اليوم (بناءً على سجلات الـ Logs الميدانية للتسكين)
+                if (booking.supervisionLogs && Array.isArray(booking.supervisionLogs)) {
+                    booking.supervisionLogs.forEach(log => {
+                        if (log.timestamp) {
+                            const logDate = log.timestamp.split('T')[0];
+                            if (logDate === selectedDate) {
+                                totalCollectedToday += parseFloat(log.amountCollected) || 0;
+                            }
+                        }
+                    });
+                }
+            });
+
+            // تحديث الشاشة بالأرقام المحسوبة فوراً
+            document.getElementById('statCollected').innerHTML = `${totalCollectedToday} <span class="small" style="font-size:0.7rem">ج.م</span>`;
+            document.getElementById('statRemaining').innerHTML = `${totalRemainingToday} <span class="small" style="font-size:0.7rem">ج.م</span>`;
+            document.getElementById('statCheckInCount').innerText = checkInCount;
+            document.getElementById('statCheckOutCount').innerText = checkOutCount;
+
+        } catch (error) {
+            console.error("خطأ أثناء تحديث أرقام اللوحة الميدانية: ", error);
+        }
+    }
+
+    // زرار تسجيل الخروج ومسح الجلسة الدائمة
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        if(confirm("هل أنت متأكد من تسجيل الخروج وتبديل الحساب؟")) {
+            localStorage.clear(); // تنظيف الذاكرة تماماً
+            window.location.href = "index.html";
+        }
+    });
+
+    // التنقل بين الملفات والصفحات
+    window.navigateTo = (pageName) => {
+        window.location.href = pageName;
+    };
+
+    window.calculateDashboardStats = calculateDashboardStats;
+    
+    window.onload = () => {
+        if(checkAuthProtection()) {
+            setDefaultDate();
+            calculateDashboardStats();
+        }
+    };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

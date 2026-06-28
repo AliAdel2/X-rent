@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل حجز جديد فخم | Masar PRO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { 
+            --bg-app: #f4f7fc;
+            --primary: #004aad;
+            --primary-dark: #00357a;
+            --gold: #c5a059;
+            --card-white: #ffffff;
+            --text-main: #1e293b;
+            --glass-border: rgba(0, 74, 173, 0.08);
+        }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-app); color: var(--text-main); padding-bottom: 40px; }
+        
+        .navbar-brand-custom { font-weight: 900; color: var(--primary); }
+        
+        /* كارت الفورم الزجاجي الفخم */
+        .glass-booking-card {
+            background: var(--card-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 12px 30px rgba(0, 74, 173, 0.03);
+        }
+        
+        /* عناوين الخطوات الرقمية */
+        .step-badge {
+            background: var(--primary);
+            color: #fff;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        .step-title { font-size: 1rem; font-weight: 900; color: var(--text-main); margin-bottom: 15px; display: flex; align-items: center; }
+
+        /* 🛠️ الإصلاح السحري لـ flatpickr المفرود في الـ RTL والمتوافق مع الموبايل */
+        .flatpickr-calendar.inline {
+            width: 100% !important; 
+            max-width: 340px !important; /* العرض المثالي لشاشات الموبايل بدون تمطيط */
+            box-shadow: none !important;
+            border: 1px solid #e2e8f0 !important; 
+            background: #0f172a !important;
+            border-radius: 16px !important; 
+            margin: 0 auto !important;
+            display: block !important;
+        }
+
+        /* تظبيط عرض حاويات الأيام الداخلية لتكون مرنة */
+        .flatpickr-innerContainer, .flatpickr-days, .dayContainer {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 100% !important;
+        }
+
+        /* توزيع أسماء أيام الأسبوع (السبت، الأحد...) بالتساوي وبدون تداخل */
+        .flatpickr-weekdays {
+            width: 100% !important;
+            background: #0f172a !important;
+        }
+        span.flatpickr-weekday {
+            background: #0f172a !important; 
+            color: #94a3b8 !important; 
+            flex: 1 !important; /* يوزع الأيام الـ 7 بالتساوي على كامل العرض */
+        }
+
+        /* تظبيط شبكة الأيام والأرقام نفسها داخل الموبايل */
+        .dayContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .flatpickr-day {
+            max-width: 38px !important;
+            height: 38px !important;
+            line-height: 38px !important;
+            margin: 2px 1px !important;
+            flex-basis: 13% !important; /* يضمن توافق الـ 7 أيام في السطر */
+        }
+
+        .flatpickr-months .flatpickr-month, .flatpickr-current-month { 
+            background: #0f172a !important; 
+            color: #fff !important; 
+        }
+
+        .flatpickr-day.is-past-hidden { visibility: hidden !important; pointer-events: none !important; }
+        .booked-day-style { background: #334155 !important; color: #64748b !important; border-radius: 0 !important; text-decoration: line-through; pointer-events: none; }
+        .edge-day-active { cursor: pointer !important; color: #fff !important; font-weight: bold !important; background: var(--primary) !important; text-decoration: none !important; }
+
+        /* 🧾 الفاتورة الذكية اللحظية */
+        .invoice-box {
+            background: #fff; border: 2px dashed var(--primary); border-radius: 16px;
+            padding: 16px; position: relative; animation: fadeIn 0.3s ease-in-out;
+        }
+        .invoice-box::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: var(--gold); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-control, .form-select {
+            border-radius: 12px; border: 1px solid #e2e8f0; padding: 10px 14px; font-size: 0.85rem; font-weight: 600;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center sticky-top shadow-sm">
+    <a href="marketer_dashboard.html" class="btn btn-light rounded-circle border shadow-sm"><i class="fas fa-arrow-right"></i></a>
+    <h5 class="m-0 navbar-brand-custom">X-rent<span class="text-warning">.PRO</span></h5>
+    <div style="width: 40px;"></div>
+</nav>
+
+<div class="container mt-4 px-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="glass-booking-card">
+                <div class="text-center mb-4">
+                    <h5 class="fw-black text-primary m-0"><i class="fas fa-calendar-plus me-1"></i>   | حجز سريع</h5>
+                    <p class="text-muted small mb-0">سجل بيانات الحجز وسيقوم السيستم بإغلاق التواريخ تلقائياً</p>
+                </div>
+
+                <form id="newBookingForm">
+                    
+                    <div class="mb-4">
+                        <div class="step-title"><span class="step-badge">1</span> اختيار شاليه الإقامة</div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">المنتجع / القرية</label>
+                                <select class="form-select" id="bookingVillage" onchange="filterUnitsByVillage()">
+                                    <option value="" disabled selected>اختر القرية...</option>
+                                    <option value="فارما بيتش ريزورت">فارما بيتش ريزورت</option>
+                                    <option value="مارينا دلتا">مارينا دلتا</option>
+                                    <option value="مارينا لاجونز">مارينا لاجونز</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">الشاليه (الكود الموحد)</label>
+                                <select class="form-select" id="bookingUnit" onchange="onUnitSelected()" disabled>
+                                    <option value="" disabled selected>اختر القرية أولاً...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 d-none" id="calendarSection">
+                        <div class="step-title"><span class="step-badge">2</span> فترة الحجز (اضغط لتحديد البداية والنهاية)</div>
+                        <input type="text" id="bookingDatePicker" class="d-none">
+                        <div id="inlineBookingCalendar"></div>
+                        <div class="text-center text-muted small mt-2 fw-bold">
+                            <span class="badge bg-dark text-secondary text-decoration-line-through me-2">الأيام المشطوبة</span> تعني محجوزة فعلياً ولا يمكن اختيارها.
+                        </div>
+                    </div>
+
+                    <div class="mb-4 d-none" id="customerSection">
+                        <div class="step-title"><span class="step-badge">3</span> تفاصيل العميل والمستحقات</div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">اسم العميل الحركي/الكامل</label>
+                                <input type="text" class="form-control" id="customerName" placeholder="مثال: أحمد محمد علي" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">رقم الهاتف للتواصل</label>
+                                <input type="tel" class="form-control text-start" id="customerPhone" placeholder="01xxxxxxxxx" required>
+                            </div>
+                        </div>
+
+                        <div class="invoice-box mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary small fw-bold">سعر ليلة الشاليه الافتراضي:</span>
+                                <b id="invUnitPrice" class="text-dark small">0 ج.م</b>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary small fw-bold">المدة المحددة:</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" id="invNights">0 ليلة</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top border-light">
+                                <span class="text-dark fw-bold small">إجمالي مطلوب الإقامة:</span>
+                                <b id="invTotal" class="h5 m-0 text-primary fw-black">0 ج.م</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-4 fw-bold shadow-sm d-none" id="submitBookingBtn">
+                        <i class="fas fa-check-circle me-1"></i> اعتماد وحفظ الحجز بالسيستم
+                    </button>
+
+                </form>
+
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allUnits = [];
+    let selectedUnitObj = null;
+    let flatpickrInstance = null;
+    let selectedDatesRangeStr = "";
+    let calculatedNights = 0;
+    let calculatedTotal = 0;
+
+    // جلب الوحدات فور فتح الصفحة لسرعة الاستجابة
+    async function fetchAllUnits() {
+        const querySnapshot = await getDocs(collection(db, "units"));
+        allUnits = [];
+        querySnapshot.forEach(doc => allUnits.push({ id: doc.id, ...doc.data() }));
+    }
+    fetchAllUnits();
+
+    // فلترة الشاليهات بناء على القرية المختارة
+    window.filterUnitsByVillage = () => {
+        const village = document.getElementById('bookingVillage').value;
+        const unitSelect = document.getElementById('bookingUnit');
+        
+        unitSelect.innerHTML = `<option value="" disabled selected>اختر الشاليه...</option>`;
+        const filtered = allUnits.filter(u => u.village === village);
+        
+        filtered.forEach(u => {
+            unitSelect.innerHTML += `<option value="${u.id}">${u.rentCode || 'N/A'} - (${u.chaletName || 'بدون اسم'})</option>`;
+        });
+        unitSelect.disabled = false;
+        
+        // إعادة إخفاء الخطوات التالية لو تم تغيير القرية
+        document.getElementById('calendarSection').classList.add('d-none');
+        document.getElementById('customerSection').classList.add('d-none');
+        document.getElementById('submitBookingBtn').classList.add('d-none');
+    };
+
+    // عند اختيار شاليه معين، نقرأ التواريخ المحجوزة ونبني له الـ Calendar الخاص بيه
+    window.onUnitSelected = () => {
+        const unitId = document.getElementById('bookingUnit').value;
+        selectedUnitObj = allUnits.find(u => u.id === unitId);
+        
+        if(!selectedUnitObj) return;
+
+        document.getElementById('calendarSection').classList.remove('d-none');
+        document.getElementById('invUnitPrice').innerText = (selectedUnitObj.price || 0) + " ج.م";
+        
+        // تهيئة الـ Calendar بالتواريخ المغلقة للشاليه ده بالتحديد
+        initDynamicCalendar(selectedUnitObj.bookedDates || []);
+    };
+
+    function formatDateToStr(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function parseRanges(bookedDates) {
+        let parsed = [];
+        bookedDates.forEach(range => {
+            let startStr = ""; let endStr = "";
+            if (typeof range === 'string') {
+                const parts = range.split(/ to | - | إلى /);
+                if (parts.length === 2) { startStr = parts[0].trim(); endStr = parts[1].trim(); }
+            } else if (range.start && range.end) {
+                startStr = range.start; endStr = range.end;
+            }
+            if (startStr && endStr) parsed.push({ start: startStr, end: endStr });
+        });
+        return parsed;
+    }
+
+    function initDynamicCalendar(bookedDates) {
+        let disabledDays = [];
+        const ranges = parseRanges(bookedDates);
+
+        ranges.forEach(r => {
+            let current = new Date(r.start);
+            let endObj = new Date(r.end);
+            while (current < endObj) {
+                disabledDays.push(formatDateToStr(current));
+                current.setDate(current.getDate() + 1);
+            }
+        });
+
+        if (flatpickrInstance) flatpickrInstance.destroy();
+
+        flatpickrInstance = flatpickr("#bookingDatePicker", {
+            mode: "range", minDate: "today", inline: true, locale: "ar", dateFormat: "Y-m-d",
+            disable: disabledDays, appendTo: document.getElementById('inlineBookingCalendar'),
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                const dateStr = formatDateToStr(dayElem.dateObj);
+                if (disabledDays.includes(dateStr)) {
+                    dayElem.classList.add("booked-day-style");
+                }
+            },
+            onChange: function(selectedDates, dateStr) {
+                if (selectedDates.length === 2) {
+                    // حساب عدد الليالي الفعلي
+                    calculatedNights = Math.ceil((selectedDates[1] - selectedDates[0]) / (1000 * 60 * 60 * 24));
+                    calculatedTotal = calculatedNights * (selectedUnitObj.price || 0);
+
+                    // تحديث واجهة الفاتورة اللحظية
+                    document.getElementById('invNights').innerText = `${calculatedNights} ليلة`;
+                    document.getElementById('invTotal').innerText = calculatedTotal + " ج.م";
+                    
+                    selectedDatesRangeStr = `${formatDateToStr(selectedDates[0])} to ${formatDateToStr(selectedDates[1])}`;
+
+                    // إظهار الخطوات الأخيرة
+                    document.getElementById('customerSection').classList.remove('d-none');
+                    document.getElementById('submitBookingBtn').classList.remove('d-none');
+                } else {
+                    document.getElementById('customerSection').classList.add('d-none');
+                    document.getElementById('submitBookingBtn').classList.add('d-none');
+                }
+            }
+        });
+    }
+
+    // حفظ الحجز الفعلي في السيستم وتحديث الـ bookedDates لايف
+    document.getElementById('newBookingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if(!selectedUnitObj || !selectedDatesRangeStr) return alert("برجاء استكمال اختيار الشاليه والفترة أولاً");
+
+        const cName = document.getElementById('customerName').value.trim();
+        const cPhone = document.getElementById('customerPhone').value.trim();
+
+        try {
+            // تحديث حقل bookedDates داخل وثيقة الوحدة مباشرة لإغلاق التقويم فوراً
+            const unitDocRef = doc(db, "units", selectedUnitObj.id);
+            await updateDoc(unitDocRef, {
+                bookedDates: arrayUnion(selectedDatesRangeStr)
+            });
+            
+            alert(`🎉 تم اعتماد الحجز بنجاح لشاليه ${selectedUnitObj.rentCode} للعميل ${cName}!`);
+            window.location.href = "marketer_dashboard.html";
+
+        } catch (error) {
+            console.error("Error saving booking: ", error);
+            alert("حدث خطأ أثناء حفظ الحجز، يرجى المحاولة مرة أخرى.");
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
