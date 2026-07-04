@@ -36,6 +36,7 @@
 
         .grid-container { 
             overflow-x: auto; 
+            max-height: 85vh; /* تحديد ارتفاع أقصى ليعمل التمرير الرأسي الداخلي للجدول بدقة */
             width: 100%; 
             border-radius: 10px; 
             border: 1px solid #e1e2e6; 
@@ -50,6 +51,14 @@
             min-width: 100%;
         }
         
+        /* ⬇️ تثبيت الترويسة (الصف الأول بالكامل) عند النزول لأسفل */
+        .master-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10; /* قيمة تجعله فوق الخلايا العادية والعمود الجانبي */
+            background: #f1f2f6; 
+        }
+        
         .master-table th:first-child, .master-table td:first-child {
             position: sticky; 
             right: 0; 
@@ -58,11 +67,19 @@
             font-weight: 900; 
             color: #2d3436; 
             width: 160px;
-            min-width: 160px;
-            max-width: 160px;
+            min-width: 100px;
+            max-width: 100px;
             border-left: 3px solid var(--primary);
             box-shadow: -5px 0 10px rgba(0,0,0,0.03);
             white-space: nowrap;
+        }
+
+        /* ⬇️ تثبيت الخلية الأولى المشتركة (اسم الوحدة) لعدم حدوث تداخل بين التثبيت الأفقي والرأسي */
+        .master-table thead th:first-child {
+            z-index: 15; /* أعلى z-index في الجدول بالكامل وثابتة تماماً */
+            top: 0;
+            right: 0;
+            background: #f1f2f6 !important;
         }
         
         .master-table th { 
