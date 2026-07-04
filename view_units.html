@@ -256,6 +256,32 @@
     let allUnitsArray = [];
     let currentFilterStatus = 'all';
 
+    // دالة تفكيك وفحص الحجوزات بنفس منطق جدول الماستر لضمان دقة الفحص اليومي
+    function checkIsBookedToday(bookedDates) {
+        if (!bookedDates || !Array.isArray(bookedDates)) return false;
+        
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        return bookedDates.some(range => {
+            let startStr = ""; let endStr = "";
+            if (typeof range === 'string') {
+                const parts = range.split(/ to | - | إلى /);
+                if (parts.length === 2) { startStr = parts[0].trim(); endStr = parts[1].trim(); }
+            } else if (range.start && range.end) {
+                startStr = range.start; endStr = range.end;
+            }
+            
+            if (startStr && endStr) {
+                const start = new Date(startStr); start.setHours(0,0,0,0);
+                const end = new Date(endStr); end.setHours(0,0,0,0);
+                // إذا كان تاريخ اليوم يقع ضمن فترة حجز مبيوعة فعلياً
+                return (today >= start && today < end);
+            }
+            return false;
+        });
+    }
+
     function listenToResortUnits() {
         onSnapshot(collection(db, "units"), (snapshot) => {
             allUnitsArray = [];
@@ -280,7 +306,10 @@
             const uVillage = (u.village || '').toLowerCase();
             
             const matchesSearch = uCode.includes(searchQuery) || uName.includes(searchQuery) || uVillage.includes(searchQuery);
-            const isUnitAvailable = u.status !== "مشغول";
+            
+            // التعديل الأساسي: الفحص الذكي بناءً على تاريخ الحجوزات الفعلي اليوم أو حقل الحالة الفوري
+            const isBookedToday = checkIsBookedToday(u.bookedDates);
+            const isUnitAvailable = (u.status !== "مشغول" && !isBookedToday);
 
             if (currentFilterStatus === 'available') {
                 return matchesSearch && isUnitAvailable;
@@ -300,7 +329,10 @@
         }
 
         filteredUnits.forEach(u => {
-            const isAvailable = u.status !== "مشغول";
+            // التحقق الفعلي من الحجز لتغيير النصوص والبادجات
+            const isBookedToday = checkIsBookedToday(u.bookedDates);
+            const isAvailable = (u.status !== "مشغول" && !isBookedToday);
+            
             const price = parseFloat(u.price || 0);
             const chaletName = u.chaletName || `كود (${u.rentCode || 'N/A'})`;
 
@@ -337,7 +369,7 @@
 
                     <div class="my-2 border-top border-bottom py-1 d-flex justify-content-between align-items-center">
                         <span class="text-muted fw-bold" style="font-size: 0.75rem;">سعر الليلة:</span>
-                        <span class="price-tag">${price.toLocaleString()} <span style="font-size: 0.7rem; font-weight: normal; color: var(--text-muted);">ج.م</span></span>
+                        <span class="price-tag">${price.toLocaleString()} <span style="font-size: 0.7 roll; font-weight: normal; color: var(--text-muted);">ج.م</span></span>
                     </div>
 
                     <p class="text-muted text-center mb-2" style="font-size: 0.75rem; font-weight: 600; line-height: 1.4;">
@@ -357,7 +389,10 @@
 
     function updateTabsCounters() {
         const allCount = allUnitsArray.length;
-        const availableCount = allUnitsArray.filter(u => u.status !== "مشغول").length;
+        const availableCount = allUnitsArray.filter(u => {
+            const isBookedToday = checkIsBookedToday(u.bookedDates);
+            return (u.status !== "مشغول" && !isBookedToday);
+        }).length;
         const busyCount = allCount - availableCount;
 
         document.getElementById('count-all').innerText = allCount;
@@ -376,7 +411,6 @@
         renderUnitsGrid();
     };
 
-    // التعديل هنا: الدالة الآن تستقبل الـ id وتوجه لـ details.html?id=...
     window.goToDetails = (id) => {
         window.location.href = `details.html?id=${id}`;
     };
