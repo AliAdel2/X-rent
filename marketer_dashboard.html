@@ -8,6 +8,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
      <link rel="manifest" href="manifest.json">
+     <!-- جعل الصفحة متوافقة تماماً مع أبعاد شاشات الموبايل ومنع الزوم المزعج -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- كود سحري لآبل (آيفون) لتشغيل الموقع كتطبيق بكامل الشاشة وإخفاء شريط المتصفح -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" style="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Masar PRO">
+
+<!-- كود الأندرويد ومتصفح كروم للتشغيل بكامل الشاشة -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#004aad"> <!-- لون شريط الحالة العلوي ليطابق هويتك -->
+
     <style>
         :root { 
             --bg-light: #f4f7fc;
@@ -382,5 +394,20 @@
         window.location.href = "index.html";
     };
 </script>
+<script>
+    // أول ما المستخدم يلمس الشاشة في أي مكان، يتم تفعيل وضع التطبيق الكامل
+    document.addEventListener("click", function() {
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+        if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+        }
+    });
+</script>
+
 </body>
 </html>
